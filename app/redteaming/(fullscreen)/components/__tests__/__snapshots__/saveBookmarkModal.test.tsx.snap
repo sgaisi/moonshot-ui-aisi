@@ -19,12 +19,7 @@ exports[`SaveBookmarkModal renders and populates hidden form elements with the c
         Save New Bookmark
       </h1>
       <div
-        class="
-        flex items-center justify-center 
-        cursor-pointer
-        hover:opacity-50 active:opacity-25
-        
-      "
+        class="flex items-center justify-center cursor-pointer hover:opacity-50 active:opacity-25"
       >
         <svg
           height="20"

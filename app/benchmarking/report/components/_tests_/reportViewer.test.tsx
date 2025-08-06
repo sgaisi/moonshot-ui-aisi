@@ -15,6 +15,7 @@ import {
 import { mockEndpointsInReport } from './mocks/mockEndpointsInReport';
 import { mockRecipes } from './mocks/mockRecipes';
 import { mockRunnerNameAndDescription } from './mocks/mockRunnerNameAndDescription';
+import { expectNormalizedSnapshot } from '@/test-utils/jestMatchers';
 
 it('renders report containing standard cookbook results and MLCommons AISafetycookbook results', async () => {
   let container: HTMLElement | undefined = undefined;
@@ -46,9 +47,12 @@ it('renders report containing standard cookbook results and MLCommons AISafetyco
   }
   expect(screen.queryAllByRole('label', { name: /^B$/ })).toHaveLength(3); // 1 in ratings description, 1 overall grade and 1 in the recipe grade
   expect(screen.queryAllByRole('label', { name: /^L$/ })).toHaveLength(9); // 5 in section 1 (1 overall, 3 mlc recipes, 1 in inteprertation description), 4 in cookbook score card (1 overall, 3 mlc recipes)
-  expect(
-    (container as unknown as HTMLElement).querySelector('#report-content')
-  ).toMatchSnapshot();
+
+  // Use normalized snapshot for consistent className formatting
+  const reportContent = (container as unknown as HTMLElement).querySelector(
+    '#report-content'
+  );
+  expectNormalizedSnapshot(reportContent);
 
   const endpointDropdownItem = screen.queryAllByText(
     mockBenchmarkResultWithMLCCookbook.metadata.endpoints[0]

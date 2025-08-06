@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ChatBox } from '@/app/redteaming/(fullscreen)/components/chatbox';
 import { useAppDispatch, useAppSelector } from '@/lib/redux';
+import { expectNormalizedSnapshot } from '@/test-utils/jestMatchers';
 
 jest.mock('@/lib/redux', () => ({
   useAppDispatch: jest.fn(),
@@ -93,7 +94,9 @@ describe('Chatbox', () => {
 
     await userEvent.click(screen.queryAllByRole('button')[0]);
     expect(mockCreatePromptBookmarkClickHandler).toHaveBeenCalledTimes(1);
-    expect(container).toMatchSnapshot();
+
+    // Use normalized snapshot for consistent className formatting
+    expectNormalizedSnapshot(container);
   });
 
   it('displays new prompt text and loading animation when chat completion is in progress', () => {

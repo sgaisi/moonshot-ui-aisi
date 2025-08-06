@@ -4,6 +4,7 @@ import { useFormStatus } from 'react-dom';
 import { useFormState } from 'react-dom';
 import { SaveBookMarkModal } from '@/app/redteaming/(fullscreen)/components/saveBookmarkModal';
 import { useAppDispatch, useAppSelector } from '@/lib/redux';
+import { expectNormalizedSnapshot } from '@/test-utils/jestMatchers';
 
 jest.mock('@/lib/redux', () => ({
   useAppDispatch: jest.fn(),
@@ -57,7 +58,7 @@ describe('SaveBookmarkModal', () => {
 
   it('renders and populates hidden form elements with the correct values', async () => {
     const { container } = render(<SaveBookMarkModal {...mockProps} />);
-    expect(container).toMatchSnapshot();
+    expectNormalizedSnapshot(container);
 
     expect(container.querySelector('input[name="prompt"]')).toHaveValue(
       mockProps.prompt

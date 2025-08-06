@@ -285,12 +285,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               class="flex items-start gap-2"
             >
               <div
-                class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                class="flex items-center justify-center default"
               >
                 <svg
                   fill="none"
@@ -386,7 +381,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           class="pb-6"
         >
           <span
-            class="font-bold text-fuchsia-400 "
+            class="font-bold text-fuchsia-400"
           >
             Q - Quality
           </span>
@@ -396,7 +391,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           class="pb-6"
         >
           <span
-            class="font-bold text-fuchsia-400 "
+            class="font-bold text-fuchsia-400"
           >
             C - Capability
           </span>
@@ -406,7 +401,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           class="pb-6"
         >
           <span
-            class="font-bold text-fuchsia-400 "
+            class="font-bold text-fuchsia-400"
           >
             T - Trust & Safety
           </span>
@@ -449,12 +444,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               Results for
             </span>
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -495,12 +485,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             style="background-color: rgb(107, 84, 78); color: rgb(188, 185, 192);"
           >
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -568,7 +553,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             class="grid grid-rows-7 w-[70%] mt-10 gap-6"
           >
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -593,7 +578,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               </div>
             </figure>
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -618,7 +603,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               </div>
             </figure>
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -643,7 +628,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               </div>
             </figure>
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -668,7 +653,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               </div>
             </figure>
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -718,7 +703,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               </div>
             </figure>
             <figure
-              class="flex gap-4 justify-between "
+              class="flex gap-4 justify-between"
             >
               <figcaption>
                 <h5
@@ -762,12 +747,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             How to Interpret Safety Ratings?
           </h2>
           <div
-            class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+            class="flex items-center justify-center default"
           >
             <svg
               fill="none"
@@ -785,8 +765,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           </div>
         </hgroup>
         <div
-          class="main-transition 
-            "
+          class="main-transition"
           data-download="collapsible"
         >
           <div
@@ -921,8 +900,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
         </div>
       </section>
       <section
-        class="bg-moongray-1000 rounded-lg p-6 flex flex-col mt-6 text-white
-        hover:bg-moongray-950"
+        class="bg-moongray-1000 rounded-lg p-6 flex flex-col mt-6 text-white hover:bg-moongray-950"
       >
         <hgroup
           class="flex gap-4 w-full cursor-pointer"
@@ -934,12 +912,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             Limitations
           </h2>
           <div
-            class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+            class="flex items-center justify-center default"
           >
             <svg
               fill="none"
@@ -957,8 +930,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           </div>
         </hgroup>
         <div
-          class="main-transition 
-            "
+          class="main-transition"
           data-download="collapsible"
         >
           <div
@@ -1045,12 +1017,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             How to Interpret A-E Ratings?
           </h2>
           <div
-            class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+            class="flex items-center justify-center default"
           >
             <svg
               fill="none"
@@ -1068,9 +1035,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           </div>
         </hgroup>
         <div
-          class="text-reportText 
-            main-transition 
-            "
+          class="text-reportText main-transition"
           data-download="collapsible"
         >
           <div
@@ -1312,9 +1277,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
         class="bg-moongray-1000 rounded-lg break-before-page"
       >
         <header
-          class="flex justify-between items-center bg-moongray-800 p-4 
-        rounded-t-lg cursor-pointer hover:bg-moongray-700
-        rounded-b-lg"
+          class="flex justify-between items-center bg-moongray-800 p-4 rounded-t-lg cursor-pointer hover:bg-moongray-700 rounded-b-lg"
           data-download="collapsible-trigger"
           style="transition: background-color 0.3s ease-in-out; border: 1px solid #669c44;"
         >
@@ -1322,12 +1285,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             class="flex items-center gap-2"
           >
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -1354,12 +1312,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               Mock Standard Cookbook Description
             </h3>
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -1394,9 +1347,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           </div>
         </header>
         <main
-          class="px-4 
-          main-transition 
-          "
+          class="px-4 main-transition"
           data-download="collapsible"
         >
           <div
@@ -1414,12 +1365,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -1603,9 +1549,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
         class="bg-moongray-1000 rounded-lg break-before-page"
       >
         <header
-          class="flex justify-between items-center bg-moongray-800 p-4 
-        rounded-t-lg cursor-pointer hover:bg-moongray-700
-        rounded-b-lg"
+          class="flex justify-between items-center bg-moongray-800 p-4 rounded-t-lg cursor-pointer hover:bg-moongray-700 rounded-b-lg"
           data-download="collapsible-trigger"
           style="transition: background-color 0.3s ease-in-out; border: 1px solid #25a167;"
         >
@@ -1613,12 +1557,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
             class="flex items-center gap-2"
           >
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -1645,12 +1584,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
               MLCommons AI Safety Benchmarks v0.5 for General Chat Models
             </h3>
             <div
-              class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+              class="flex items-center justify-center default"
             >
               <svg
                 fill="none"
@@ -1685,9 +1619,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
           </div>
         </header>
         <main
-          class="px-4 
-          main-transition 
-          "
+          class="px-4 main-transition"
           data-download="collapsible"
         >
           <div
@@ -1705,12 +1637,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -1894,12 +1821,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -2086,12 +2008,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -2275,12 +2192,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -2467,12 +2379,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -2656,12 +2563,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
@@ -2848,12 +2750,7 @@ exports[`renders report containing standard cookbook results and MLCommons AISaf
                 class="flex items-center"
               >
                 <div
-                  class="
-        flex items-center justify-center 
-        default
-        
-        
-      "
+                  class="flex items-center justify-center default"
                 >
                   <svg
                     fill="none"
