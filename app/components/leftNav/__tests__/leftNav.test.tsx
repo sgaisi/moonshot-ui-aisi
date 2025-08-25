@@ -33,13 +33,14 @@ jest.mock('next/link', () => {
 test('renders leftNav', () => {
   const view = render(<LeftNav />);
   const links = view.getAllByRole('link');
-  expect(links.length).toEqual(5);
+  expect(links.length).toEqual(6);
   const endpointLink = links.find(
     (l) => l.getAttribute('href') === '/endpoints'
   );
   const benchmarkLink = links.find(
     (l) => l.getAttribute('href') === '/benchmarking'
   );
+  const agenticLink = links.find((l) => l.getAttribute('href') === '/agentic');
   const redteamLink = links.find(
     (l) => l.getAttribute('href') === '/redteaming'
   );
@@ -49,6 +50,7 @@ test('renders leftNav', () => {
   );
   expect(endpointLink).toBeInTheDocument();
   expect(benchmarkLink).toBeInTheDocument();
+  expect(agenticLink).toBeInTheDocument();
   expect(redteamLink).toBeInTheDocument();
   expect(historyLink).toBeInTheDocument();
   expect(utilitiesLink).toBeInTheDocument();
@@ -57,6 +59,8 @@ test('renders leftNav', () => {
   expect(endpointLink).toHaveTextContent('model endpoints');
   fireEvent.mouseEnter(benchmarkLink as HTMLAnchorElement);
   expect(benchmarkLink).toHaveTextContent('benchmarking');
+  fireEvent.mouseEnter(agenticLink as HTMLAnchorElement);
+  expect(agenticLink).toHaveTextContent('agentic testing');
   fireEvent.mouseEnter(redteamLink as HTMLAnchorElement);
   expect(redteamLink).toHaveTextContent('red teaming');
   fireEvent.mouseEnter(historyLink as HTMLAnchorElement);

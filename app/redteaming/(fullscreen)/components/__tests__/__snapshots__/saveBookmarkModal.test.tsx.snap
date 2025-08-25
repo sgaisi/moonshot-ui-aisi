@@ -7,7 +7,7 @@ exports[`SaveBookmarkModal renders and populates hidden form elements with the c
     style="opacity: 0.8;"
   />
   <div
-    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[260px] z-[1000] rounded-[15px] p-6"
+    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2   w-[600px] h-[260px] z-[1000] rounded-[15px] p-6"
     style="width: 900px; height: 640px; background-color: rgb(70, 67, 73); color: rgb(255, 255, 255); box-shadow: 0 0 10px rgba(0,0,0,.5);"
   >
     <header
@@ -155,7 +155,7 @@ exports[`SaveBookmarkModal renders and populates hidden form elements with the c
       </div>
       <form
         action="unused"
-        class="absolute bottom-0 left-0 flex flex-col gap-2 p-7 w-full mt-4"
+        class="absolute bottom-0 left-0 flex   flex-col gap-2 p-7 w-full mt-4"
       >
         <div
           class="border-t border-moongray-500 w-[98%] mb-2"
