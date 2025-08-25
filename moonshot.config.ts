@@ -17,6 +17,7 @@ type MoonshotConfig = {
     basePathContextStrategies: '/api/v1/context-strategies';
     basePathRecipes: '/api/v1/recipes';
     basePathBenchmarks: '/api/v1/benchmarks';
+    basePathAgentic: '/api/v1/agentic';
     basePathRunners: '/api/v1/runners';
     basePathAttackModules: '/api/v1/attack-modules/metadata';
     basePathBookmarks: '/api/v1/bookmarks';
@@ -40,7 +41,11 @@ const config: MoonshotConfig = {
     {
       id: 'others',
       label: 'Others',
-      categoryNames: ['exclude:capability', 'exclude:Trust & Safety'],
+      categoryNames: [
+        'exclude:capability',
+        'exclude:Trust & Safety',
+        'exclude:agentic',
+      ],
     },
   ],
   estimatedPromptResponseTime: 1, // seconds
@@ -54,6 +59,7 @@ const config: MoonshotConfig = {
     basePathContextStrategies: '/api/v1/context-strategies',
     basePathRecipes: '/api/v1/recipes',
     basePathBenchmarks: '/api/v1/benchmarks',
+    basePathAgentic: '/api/v1/agentic',
     basePathRunners: '/api/v1/runners',
     basePathAttackModules: '/api/v1/attack-modules/metadata',
     basePathBookmarks: '/api/v1/bookmarks',

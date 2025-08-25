@@ -1,4 +1,6 @@
 /* Instruments */
+import { agenticRunApi } from '@/app/services/agentic-api-service';
+import { agenticStatusApi } from '@/app/services/agentic-status-api-service';
 import { attackModulesApi } from '@/app/services/attack-modules-api-service';
 import { benchmarkRunApi } from '@/app/services/benchmark-api-service';
 import { connectorApi } from '@/app/services/connector-api-service';
@@ -17,6 +19,8 @@ import {
   activeSessionSlice,
   benchmarkCookbooksStateSlice,
   benchmarkModelsStateSlice,
+  agenticCookbooksStateSlice,
+  agenticModelsStateSlice,
   redteamModelsStateSlice,
   attackModuleStateSlice,
   chatLayoutModeSlice,
@@ -34,6 +38,8 @@ export const reducer = {
   chatLayoutMode: chatLayoutModeSlice.reducer,
   benchmarkModels: benchmarkModelsStateSlice.reducer,
   benchmarkCookbooks: benchmarkCookbooksStateSlice.reducer,
+  agenticModels: agenticModelsStateSlice.reducer,
+  agenticCookbooks: agenticCookbooksStateSlice.reducer,
   redteamModels: redteamModelsStateSlice.reducer,
   attackModule: attackModuleStateSlice.reducer,
   [sessionApi.reducerPath]: sessionApi.reducer,
@@ -42,7 +48,9 @@ export const reducer = {
   [cookbookApi.reducerPath]: cookbookApi.reducer,
   [recipeApi.reducerPath]: recipeApi.reducer,
   [benchmarkRunApi.reducerPath]: benchmarkRunApi.reducer,
+  [agenticRunApi.reducerPath]: agenticRunApi.reducer,
   [statusApi.reducerPath]: statusApi.reducer,
+  [agenticStatusApi.reducerPath]: agenticStatusApi.reducer,
   [connectorApi.reducerPath]: connectorApi.reducer,
   [contextStratApi.reducerPath]: contextStratApi.reducer,
   [datasetApi.reducerPath]: datasetApi.reducer,

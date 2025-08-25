@@ -3,11 +3,18 @@ export enum AppEventTypes {
   BENCHMARK_UPDATE = 'benchmark-update',
   BENCHMARK_COMPLETE = 'benchmark-complete',
   REDTEAM_UPDATE = 'redteam-update',
+  AGENTIC_UPDATE = 'agentic-update',
+  AGENTIC_COMPLETE = 'agentic-complete',
 }
 
 export enum BenchmarkCollectionType {
   COOKBOOK = 'cookbook',
   BENCHMARK = 'benchmark',
+}
+
+export enum AgenticCollectionType {
+  COOKBOOK = 'cookbook',
+  RECIPE = 'recipe',
 }
 
 export enum TestStatusProgress {

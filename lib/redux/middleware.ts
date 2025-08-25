@@ -1,5 +1,7 @@
 /* Core */
 import { createLogger } from 'redux-logger';
+import { agenticRunApi } from '@/app/services/agentic-api-service';
+import { agenticStatusApi } from '@/app/services/agentic-status-api-service';
 import { attackModulesApi } from '@/app/services/attack-modules-api-service';
 import { benchmarkRunApi } from '@/app/services/benchmark-api-service';
 import { connectorApi } from '@/app/services/connector-api-service';
@@ -21,7 +23,9 @@ const middleware = [
   cookbookApi.middleware,
   recipeApi.middleware,
   benchmarkRunApi.middleware,
+  agenticRunApi.middleware,
   statusApi.middleware,
+  agenticStatusApi.middleware,
   connectorApi.middleware,
   contextStratApi.middleware,
   datasetApi.middleware,

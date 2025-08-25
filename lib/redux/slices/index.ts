@@ -5,6 +5,8 @@ export * from './darkModeSlice';
 export * from './windowsSlice';
 export * from './benchmarkModelsSlice';
 export * from './benchmarkCookbooksSlice';
+export * from './agenticModelsSlice';
+export * from './agenticCookbooksSlice';
 export * from './activeResultSlice';
 export * from './redteamModelsSlice';
 export * from './attackModuleSlice';
