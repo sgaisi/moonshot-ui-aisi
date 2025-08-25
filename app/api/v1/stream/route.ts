@@ -9,13 +9,17 @@ export const dynamic = 'force-dynamic';
 
 let heartbeatTimers: NodeJS.Timeout[] = [];
 let bmEmitters: EventEmitter[] = [];
+let agenticEmitters: EventEmitter[] = [];
 
 const cleanup = () => {
   heartbeatTimers.forEach((timer) => clearInterval(timer));
   heartbeatTimers = [];
   bmEmitters.forEach((emitter) => emitter.removeAllListeners());
   bmEmitters = [];
+  agenticEmitters.forEach((emitter) => emitter.removeAllListeners());
+  agenticEmitters = [];
   appEventBus.removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
+  appEventBus.removeAllListeners(AppEventTypes.AGENTIC_UPDATE);
   appEventBus.removeAllListeners(AppEventTypes.SYSTEM_UPDATE);
 };
 
@@ -31,17 +35,32 @@ export async function GET() {
   const encoder = new TextEncoder();
   const sseWriter = getSSEWriter(writer, encoder);
 
-  const totalListeners = appEventBus.listenerCount(
+  const totalBenchmarkListeners = appEventBus.listenerCount(
     AppEventTypes.BENCHMARK_UPDATE
   );
-  if (totalListeners === appEventBus.getMaxListeners() - 1) {
+  if (totalBenchmarkListeners === appEventBus.getMaxListeners() - 1) {
     bmEmitters[0].removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
     bmEmitters.shift();
   }
-  if (totalListeners === appEventBus.getMaxListeners()) {
+  if (totalBenchmarkListeners === appEventBus.getMaxListeners()) {
     console.log(
       'Max number of listeners reached for: ',
       AppEventTypes.BENCHMARK_UPDATE
+    );
+    return new NextResponse('Max number of listeners reached', { status: 429 });
+  }
+
+  const totalAgenticListeners = appEventBus.listenerCount(
+    AppEventTypes.AGENTIC_UPDATE
+  );
+  if (totalAgenticListeners === appEventBus.getMaxListeners() - 1) {
+    agenticEmitters[0]?.removeAllListeners(AppEventTypes.AGENTIC_UPDATE);
+    agenticEmitters.shift();
+  }
+  if (totalAgenticListeners === appEventBus.getMaxListeners()) {
+    console.log(
+      'Max number of listeners reached for: ',
+      AppEventTypes.AGENTIC_UPDATE
     );
     return new NextResponse('Max number of listeners reached', { status: 429 });
   }
@@ -83,6 +102,48 @@ export async function GET() {
     }
   );
   bmEmitters.push(emitter);
+
+  // Add AGENTIC_UPDATE event listener
+  const agenticEmitter = appEventBus.on(
+    AppEventTypes.AGENTIC_UPDATE,
+    (data: TestStatus) => {
+      let errorCount = 0;
+      console.debug('Agentic data received from webhook', {
+        runner_id: data.current_runner_id,
+        current_progress: data.current_progress,
+        current_status: data.current_status,
+      });
+      try {
+        if ('current_runner_id' in data) {
+          (sseWriter as BenchMarkEvents).update({
+            data,
+            event: AppEventTypes.AGENTIC_UPDATE,
+          });
+        } else {
+          (sseWriter as SystemEvents).update({
+            data,
+            event: AppEventTypes.SYSTEM_UPDATE,
+          });
+        }
+      } catch (error) {
+        console.error(
+          'Error writing agentic webhook data to SSE stream',
+          error
+        );
+        errorCount++; // Increment error count
+
+        if (errorCount === 20) {
+          agenticEmitter.removeAllListeners(AppEventTypes.AGENTIC_UPDATE);
+          errorCount = 0; // Reset error count after 20 occurrences
+          const index = agenticEmitters.indexOf(agenticEmitter);
+          if (index > -1) {
+            agenticEmitters.splice(index, 1);
+          }
+        }
+      }
+    }
+  );
+  agenticEmitters.push(agenticEmitter);
 
   // Heartbeat mechanism
   // const heartbeatInterval = setInterval(() => {
