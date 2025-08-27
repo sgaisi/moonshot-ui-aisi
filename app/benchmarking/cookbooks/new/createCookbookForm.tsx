@@ -1,15 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useFormState } from 'react-dom';
 import { createCookbook } from '@/actions/createCookbook';
 import { redirectRoute } from '@/actions/redirectRoute';
 import { SelectedRecipesPills } from '@/app/benchmarking/recipes/selectedRecipesPills';
 import { Icon, IconName } from '@/app/components/IconSVG';
 import { Button, ButtonType } from '@/app/components/button';
-import { Modal } from '@/app/components/modal';
+import { ErrorModal } from '@/app/components/modals/ErrorModal';
+import { SuccessModal } from '@/app/components/modals/SuccessModal';
 import { TextArea } from '@/app/components/textArea';
 import { TextInput } from '@/app/components/textInput';
+import { useFormModal } from '@/app/hooks/useFormModal';
 import { colors } from '@/app/customColors';
 export const dynamic = 'force-dynamic';
 
@@ -45,78 +46,44 @@ function CreateCookbookForm({
   setName,
   setDescription,
 }: CreateCookbookFormProps) {
-  const [showResultModal, setShowResultModal] = React.useState(false);
-  const [showErrorModal, setShowErrorModal] = React.useState(false);
-  const [formState, action] = useFormState<
-    FormState<CookbookFormValues>,
-    FormData
-  >(createCookbook, initialFormValues);
+  const [formState, action, modalState] = useFormModal(
+    createCookbook,
+    initialFormValues,
+    {
+      onSuccess: () => {
+        setName('');
+        setDescription('');
+      },
+    }
+  );
 
-  React.useEffect(() => {
-    if (formState.formStatus === 'error') {
-      setShowErrorModal(true);
-      return;
-    }
-    if (formState.formStatus === 'success') {
-      setShowResultModal(true);
-      setName('');
-      setDescription('');
-    }
-  }, [formState]);
+  function handleSuccessPrimaryClick() {
+    modalState.closeAllModals();
+    redirectRoute('/benchmarking/cookbooks', ['cookbooks-collection']);
+  }
+
+  function handleSuccessSecondaryClick() {
+    modalState.closeAllModals();
+  }
 
   return (
     <>
-      {showErrorModal ? (
-        <Modal
-          heading="Errors"
-          bgColor={colors.moongray['800']}
-          textColor="#FFFFFF"
-          primaryBtnLabel="Close"
-          enableScreenOverlay
-          onCloseIconClick={() => setShowErrorModal(false)}
-          onPrimaryBtnClick={() => setShowErrorModal(false)}>
-          <div className="flex gap-2 items-start">
-            <Icon
-              name={IconName.Alert}
-              size={40}
-              color="red"
-            />
-            {formState.formErrors ? (
-              <ul>
-                {Object.entries(formState.formErrors).map(([key, value]) => (
-                  <li key={key}>
-                    {key}: {value.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              'An unknown error occurred'
-            )}
-          </div>
-        </Modal>
-      ) : null}
-      {showResultModal ? (
-        <Modal
-          heading="Cookbook Created"
-          bgColor={colors.moongray['800']}
-          textColor="#FFFFFF"
-          primaryBtnLabel="View Cookbooks"
-          secondaryBtnLabel="Create Another"
-          enableScreenOverlay
-          onCloseIconClick={() => {
-            setShowResultModal(false);
-          }}
-          onSecondaryBtnClick={() => {
-            setShowResultModal(false);
-          }}
-          onPrimaryBtnClick={() =>
-            redirectRoute('/benchmarking/cookbooks', ['cookbooks-collection'])
-          }>
-          <div className="flex gap-2 items-start">
-            <p>{`Cookbook ${formState.name} was successfully created.`}</p>
-          </div>
-        </Modal>
-      ) : null}
+      <ErrorModal
+        isOpen={modalState.showErrorModal}
+        errors={formState.formErrors}
+        onClose={modalState.setShowErrorModal.bind(null, false)}
+      />
+
+      <SuccessModal
+        isOpen={modalState.showSuccessModal}
+        heading="Cookbook Created"
+        message={`Cookbook ${formState.name} was successfully created.`}
+        primaryBtnLabel="View Cookbooks"
+        secondaryBtnLabel="Create Another"
+        onClose={handleSuccessSecondaryClick}
+        onPrimaryBtnClick={handleSuccessPrimaryClick}
+        onSecondaryBtnClick={handleSuccessSecondaryClick}
+      />
       <header className="flex gap-5 w-full justify-center">
         <h1 className="text-[1.6rem] text-white">Create Cookbook</h1>
       </header>
