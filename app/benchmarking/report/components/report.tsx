@@ -179,34 +179,36 @@ const Report = React.forwardRef<HTMLDivElement, BenchmarkReportProps>(
                         );
                         return recipe ? (
                           MLC_RECIPE_IDS.includes(recipe.id) ? (
-                            <React.Suspense fallback={<LoadingText />}>
-                              <>
+                            <React.Suspense
+                              key={recipeResult.id}
+                              fallback={<LoadingText />}>
+                              <React.Fragment>
                                 {i > 0 && i % 2 === 0 && (
                                   <div className="break-before-page h-[40px]" />
                                 )}
                                 <MlcAiSafetyRecipeRatingResult
-                                  key={recipeResult.id}
                                   result={recipeResult}
                                   recipe={recipe}
                                   endpointId={endpointId}
                                 />
-                              </>
+                              </React.Fragment>
                             </React.Suspense>
                           ) : (
-                            <>
+                            <React.Fragment key={recipeResult.id}>
                               {i > 0 && i % 2 === 0 && (
                                 <div className="break-before-page h-[40px]" />
                               )}
                               <RecipeRatingResult
-                                key={recipeResult.id}
                                 result={recipeResult}
                                 recipe={recipe}
                                 endpointId={endpointId}
                               />
-                            </>
+                            </React.Fragment>
                           )
                         ) : (
-                          <div>No recipe details for {recipeResult.id}</div>
+                          <div key={recipeResult.id}>
+                            No recipe details for {recipeResult.id}
+                          </div>
                         );
                       }
                     )}
@@ -227,19 +229,20 @@ const Report = React.forwardRef<HTMLDivElement, BenchmarkReportProps>(
                           (recipe) => recipe.id === recipeResult.id
                         );
                         return recipeDetails ? (
-                          <>
+                          <React.Fragment key={recipeResult.id}>
                             {i > 0 && i % 2 === 0 && (
                               <div className="break-before-page h-[40px]" />
                             )}
                             <MlcAiSafetyRecipeRatingResult
-                              key={recipeResult.id}
                               result={recipeResult}
                               recipe={recipeDetails}
                               endpointId={endpointId}
                             />
-                          </>
+                          </React.Fragment>
                         ) : (
-                          <div>No recipe details for {recipeResult.id}</div>
+                          <div key={recipeResult.id}>
+                            No recipe details for {recipeResult.id}
+                          </div>
                         );
                       }
                     )}

@@ -20,11 +20,16 @@ function CookbookSelectionItem(props: CookbookSelectionItemProps) {
     cookbook.required_config
   );
 
-  function handleClick(
-    e: React.MouseEvent | React.ChangeEvent<HTMLInputElement>
-  ) {
+  function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
     setIsSelected(!isSelected);
+    onSelect(cookbook);
+  }
+
+  function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
+    e.stopPropagation();
+    const newCheckedState = e.target.checked;
+    setIsSelected(newCheckedState);
     onSelect(cookbook);
   }
 
@@ -56,13 +61,15 @@ function CookbookSelectionItem(props: CookbookSelectionItemProps) {
                 {cookbook.name}
               </h3>
             </div>
-            <Checkbox
-              label=""
-              size="s"
-              ariaLabel={`Select ${cookbook.id}`}
-              checked={isSelected}
-              onClick={handleClick}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                label=""
+                size="s"
+                ariaLabel={`Select ${cookbook.id}`}
+                checked={isSelected}
+                onChange={handleCheckboxChange}
+              />
+            </div>
           </header>
           <div className="flex flex-wrap gap-2 mb-4 mt-6">
             {cookbook.tags?.map((tagName) => (

@@ -51,26 +51,6 @@ export default function AgenticHomePage() {
             textColor={colors.white}
           />
         </Link>
-        <Link
-          href="/agentic/cookbooks"
-          style={{ width: '40%' }}>
-          <SubmenuButton
-            width="100%"
-            text="View Cookbooks"
-            menuIconName={IconName.Book}
-            textColor={colors.white}
-          />
-        </Link>
-        <Link
-          href="/agentic/recipes"
-          style={{ width: '40%' }}>
-          <SubmenuButton
-            width="100%"
-            text="View Recipes"
-            menuIconName={IconName.File}
-            textColor={colors.white}
-          />
-        </Link>
       </section>
     </>
   );
