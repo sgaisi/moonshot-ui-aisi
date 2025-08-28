@@ -1,11 +1,12 @@
 import React from 'react';
-import { useFormState } from 'react-dom';
 import { createBookmark } from '@/actions/createBookmark';
-import { Icon, IconName } from '@/app/components/IconSVG';
 import { Button, ButtonType } from '@/app/components/button';
 import { Chat } from '@/app/components/chat';
 import { Modal } from '@/app/components/modal';
+import { ErrorModal } from '@/app/components/modals/ErrorModal';
+import { SuccessModal } from '@/app/components/modals/SuccessModal';
 import { TextInput } from '@/app/components/textInput';
+import { useFormModal } from '@/app/hooks/useFormModal';
 import { colors } from '@/app/customColors';
 import { PromptBubbleInfo } from './prompt-bubble-info';
 import { SubmitButton } from './submitButton';
@@ -51,76 +52,49 @@ function SaveBookMarkModal(props: SaveBookMarkModalProps) {
     onPrimaryBtnClick,
   } = props;
   const [bookmarkName, setBookmarkName] = React.useState('');
-  const [showResultModal, setShowResultModal] = React.useState(false);
-  const [showErrorModal, setShowErrorModal] = React.useState(false);
-  const [formState, action] = useFormState<
-    FormState<BookmarkFormValues>,
-    FormData
-  >(createBookmark, initialFormValues);
 
-  React.useEffect(() => {
-    if (formState.formStatus === 'error') {
-      setShowErrorModal(true);
-      return;
+  const [formState, action, modalState] = useFormModal(
+    createBookmark,
+    initialFormValues,
+    {
+      onSuccess: () => {
+        setBookmarkName('');
+      },
     }
-    if (formState.formStatus === 'success') {
-      setShowResultModal(true);
-      setBookmarkName('');
-    }
-  }, [formState]);
+  );
 
   function handleBookmarkNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     setBookmarkName(e.target.value);
   }
 
+  function handleSuccessBtnClick() {
+    modalState.closeAllModals();
+    onPrimaryBtnClick();
+  }
+
+  function handleModalClose() {
+    modalState.closeAllModals();
+    onCloseIconClick();
+  }
+
   return (
     <>
-      {showResultModal ? (
-        <Modal
-          heading="Bookmark Saved"
-          bgColor={colors.moongray['800']}
-          textColor="#FFFFFF"
-          primaryBtnLabel="View Bookmarks"
-          enableScreenOverlay
-          overlayOpacity={0.8}
-          onCloseIconClick={onCloseIconClick}
-          onPrimaryBtnClick={onPrimaryBtnClick}>
-          <div className="flex gap-2 items-start">
-            <p>{`Bookmark ${formState.name} was successfully saved.`}</p>
-          </div>
-        </Modal>
-      ) : null}
-      {showErrorModal ? (
-        <Modal
-          heading="Errors"
-          bgColor={colors.moongray['800']}
-          textColor="#FFFFFF"
-          primaryBtnLabel="Close"
-          enableScreenOverlay
-          overlayOpacity={0.8}
-          onCloseIconClick={() => setShowErrorModal(false)}
-          onPrimaryBtnClick={() => setShowErrorModal(false)}>
-          <div className="flex gap-2 items-start">
-            <Icon
-              name={IconName.Alert}
-              size={40}
-              color="red"
-            />
-            {formState.formErrors ? (
-              <ul>
-                {Object.entries(formState.formErrors).map(([key, value]) => (
-                  <li key={key}>
-                    {key}: {value.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              'An unknown error occurred'
-            )}
-          </div>
-        </Modal>
-      ) : null}
-      {showResultModal || showErrorModal ? null : (
+      <SuccessModal
+        isOpen={modalState.showSuccessModal}
+        heading="Bookmark Saved"
+        message={`Bookmark ${formState.name} was successfully saved.`}
+        primaryBtnLabel="View Bookmarks"
+        onClose={handleModalClose}
+        onPrimaryBtnClick={handleSuccessBtnClick}
+      />
+
+      <ErrorModal
+        isOpen={modalState.showErrorModal}
+        errors={formState.formErrors}
+        onClose={modalState.setShowErrorModal.bind(null, false)}
+      />
+
+      {!modalState.showSuccessModal && !modalState.showErrorModal ? (
         <Modal
           width={900}
           height={640}
@@ -242,7 +216,7 @@ function SaveBookMarkModal(props: SaveBookMarkModalProps) {
             </div>
           </form>
         </Modal>
-      )}
+      ) : null}
     </>
   );
 }
