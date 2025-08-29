@@ -180,11 +180,11 @@ beforeAll(() => {
 beforeEach(() => {
   jest.clearAllMocks();
 
-  // Setup agentic status query mock
-  const {
-    useGetAgenticStatusQuery,
-  } = require('@/app/services/agentic-status-api-service');
-  (useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
+  // Setup agentic status query mock that was missing
+  const agenticStatusModule = jest.requireActual(
+    '@/app/services/agentic-status-api-service'
+  );
+  (agenticStatusModule.useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
     data: mockTestStatuses,
     isLoading: false,
   });

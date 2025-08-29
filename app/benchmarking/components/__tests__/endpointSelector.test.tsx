@@ -1,6 +1,6 @@
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EndpointSelector } from '@/app/benchmarking/components/endpointsSelector';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { useModelsList } from '@/app/hooks/useLLMEndpointList';
 
 const mockEndpoints: LLMEndpoint[] = [
@@ -36,7 +36,7 @@ jest.mock('@/app/hooks/useLLMEndpointList', () => ({
   useModelsList: jest.fn(),
 }));
 
-describe('EndpointSelector', () => {
+describe('EndpointsSelector', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -49,7 +49,7 @@ describe('EndpointSelector', () => {
     }));
 
     render(
-      <EndpointSelector
+      <EndpointsSelector
         totalSelected={0}
         selectedModels={[]}
         onModelClick={mockModelClickHandler}
@@ -69,7 +69,7 @@ describe('EndpointSelector', () => {
     }));
 
     render(
-      <EndpointSelector
+      <EndpointsSelector
         totalSelected={0}
         selectedModels={[]}
         onModelClick={mockModelClickHandler}
@@ -90,7 +90,7 @@ describe('EndpointSelector', () => {
     }));
 
     render(
-      <EndpointSelector
+      <EndpointsSelector
         totalSelected={0}
         selectedModels={[mockEndpoints[1]]}
         onModelClick={mockModelClickHandler}

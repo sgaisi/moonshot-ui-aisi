@@ -13,19 +13,35 @@ interface CustomStyle extends CSSProperties {
   WebkitLineClamp?: string;
   WebkitBoxOrient?: 'vertical';
 }
+
 const ellipsisStyle: CustomStyle = {
   display: '-webkit-box',
   WebkitLineClamp: '2',
   WebkitBoxOrient: 'vertical',
 };
 
-function AgenticRunsView({
-  runners,
-  resultIds,
-}: {
+export interface RunsViewConfig {
+  mode: 'agentic' | 'benchmark';
+  title: string;
+  newSessionPath: string;
+  reportPath: string;
+  noRunnersErrorText: string;
+}
+
+interface RunsViewProps extends RunsViewConfig {
   runners: Runner[];
   resultIds: string[];
-}) {
+}
+
+function RunsView({
+  mode: _mode,
+  title,
+  newSessionPath,
+  reportPath,
+  noRunnersErrorText,
+  runners,
+  resultIds,
+}: RunsViewProps) {
   const searchParams = useSearchParams();
   const [selectedRunner, setSelectedRunner] = React.useState<Runner>(() => {
     const id = searchParams.get('id');
@@ -36,7 +52,7 @@ function AgenticRunsView({
   });
 
   if (runners.length === 0) {
-    throw new Error('No past agentic runs found', {
+    throw new Error(noRunnersErrorText, {
       cause: 'NO_RUNNERS_FOUND',
     });
   }
@@ -48,8 +64,8 @@ function AgenticRunsView({
       bgColor={colors.moongray['950']}>
       <div className="relative h-full">
         <header className="flex gap-5 mb-3 justify-between items-end w-full">
-          <h1 className="text-[1.6rem] text-white mt-3">Past Agentic Runs</h1>
-          <Link href="/agentic/session/new">
+          <h1 className="text-[1.6rem] text-white mt-3">{title}</h1>
+          <Link href={newSessionPath}>
             <Button
               size="md"
               mode={ButtonType.OUTLINE}
@@ -160,7 +176,7 @@ function AgenticRunsView({
         </main>
         <footer className="absolute bottom-0 w-full flex justify-end gap-4">
           {resultIds.includes(selectedRunner.id) && (
-            <Link href={`/agentic/report?id=${selectedRunner.id}`}>
+            <Link href={`${reportPath}?id=${selectedRunner.id}`}>
               <Button
                 size="lg"
                 mode={ButtonType.PRIMARY}
@@ -176,4 +192,4 @@ function AgenticRunsView({
   );
 }
 
-export default AgenticRunsView;
+export { RunsView };

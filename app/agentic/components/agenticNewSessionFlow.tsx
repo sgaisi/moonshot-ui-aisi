@@ -1,8 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { AgenticCookbooksSelection } from '@/app/agentic/components/agenticCookbooksSelection';
-import { AgenticEndpointSelector } from '@/app/agentic/components/agenticEndpointsSelector';
+import { CookbookSelector } from '@/app/components/cookbookSelector/cookbookSelector';
+import { agenticCookbookSelectorConfig } from '@/app/config/testingConfigs';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { CookbooksProvider } from '@/app/benchmarking/contexts/cookbooksContext';
 import { Icon, IconName } from '@/app/components/IconSVG';
 import { Button, ButtonType } from '@/app/components/button';
@@ -111,7 +112,7 @@ function AgenticNewSessionFlow() {
   switch (flowState.view) {
     case AgenticNewSessionViews.ENDPOINTS_SELECTION:
       view = (
-        <AgenticEndpointSelector
+        <EndpointsSelector
           selectedModels={selectedModels}
           totalSelected={selectedModels.length}
           onModelClick={handleModelClick}
@@ -142,7 +143,8 @@ function AgenticNewSessionFlow() {
       break;
     case AgenticNewSessionViews.COOKBOOKS_SELECTION:
       view = (
-        <AgenticCookbooksSelection
+        <CookbookSelector
+          {...agenticCookbookSelectorConfig}
           onCookbookAboutClose={() =>
             dispatch({
               type: 'HIDE_SURFACE_OVERLAY',

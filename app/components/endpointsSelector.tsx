@@ -5,9 +5,10 @@ import { SelectListItem } from '@/app/components/selectListItem';
 import { useModelsList } from '@/app/hooks/useLLMEndpointList';
 import { formatDate } from '@/app/lib/date-utils';
 import tailwindConfig from '@/tailwind.config';
+
 const colors = tailwindConfig.theme?.extend?.colors as CustomColors;
 
-type AgenticEndpointSelectorProps = {
+type EndpointsSelectorProps = {
   totalSelected: number;
   selectedModels: LLMEndpoint[];
   onModelClick: (model: LLMEndpoint) => void;
@@ -15,7 +16,7 @@ type AgenticEndpointSelectorProps = {
   onCreateClick: () => void;
 };
 
-function AgenticEndpointSelector(props: AgenticEndpointSelectorProps) {
+function EndpointsSelector(props: EndpointsSelectorProps) {
   const {
     totalSelected,
     selectedModels,
@@ -126,4 +127,4 @@ function AgenticEndpointSelector(props: AgenticEndpointSelectorProps) {
   );
 }
 
-export { AgenticEndpointSelector };
+export { EndpointsSelector };

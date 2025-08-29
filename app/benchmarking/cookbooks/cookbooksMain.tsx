@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import BenchmarkRunForm from '@/app/benchmarking/components/benchmarkRunForm';
-import { EndpointSelector } from '@/app/benchmarking/components/endpointsSelector';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { CookbooksViewList } from '@/app/benchmarking/cookbooks/cookbooksViewList';
 import { Icon, IconName } from '@/app/components/IconSVG';
 import { MainSectionSurface } from '@/app/components/mainSectionSurface';
@@ -99,7 +99,7 @@ function CookbooksMain({ cookbooks }: { cookbooks: Cookbook[] }) {
         showPreviousIcon = true;
         showNextIcon = true;
         view = (
-          <EndpointSelector
+          <EndpointsSelector
             selectedModels={selectedEndpoints}
             totalSelected={selectedEndpoints.length}
             onModelClick={handleEndpointClick}

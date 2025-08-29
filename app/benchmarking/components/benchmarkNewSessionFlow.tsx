@@ -1,8 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { CookbooksSelection } from '@/app/benchmarking/components/cookbooksSelection';
-import { EndpointSelector } from '@/app/benchmarking/components/endpointsSelector';
+import { CookbookSelector } from '@/app/components/cookbookSelector/cookbookSelector';
+import { benchmarkCookbookSelectorConfig } from '@/app/config/testingConfigs';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { CookbooksProvider } from '@/app/benchmarking/contexts/cookbooksContext';
 import { Icon, IconName } from '@/app/components/IconSVG';
 import { Button, ButtonType } from '@/app/components/button';
@@ -156,7 +157,7 @@ function BenchmarkNewSessionFlow() {
   switch (flowState.view) {
     case BenchmarkNewSessionViews.ENDPOINTS_SELECTION:
       view = (
-        <EndpointSelector
+        <EndpointsSelector
           selectedModels={selectedModels}
           totalSelected={selectedModels.length}
           onModelClick={handleModelClick}
@@ -187,7 +188,8 @@ function BenchmarkNewSessionFlow() {
       break;
     case BenchmarkNewSessionViews.COOKBOOKS_SELECTION:
       view = (
-        <CookbooksSelection
+        <CookbookSelector
+          {...benchmarkCookbookSelectorConfig}
           onCookbookAboutClose={() =>
             dispatch({
               type: 'HIDE_SURFACE_OVERLAY',

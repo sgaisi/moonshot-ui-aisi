@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CookbookAbout } from '@/app/benchmarking/components/cookbookAbout';
+import { CookbookAbout } from '@/app/components/cookbookAbout';
 import { useGetAllRecipesQuery } from '@/app/services/recipe-api-service';
 
 jest.mock('@/app/services/recipe-api-service', () => ({

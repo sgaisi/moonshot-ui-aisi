@@ -1,5 +1,6 @@
 import { RunnerDetailWebApiModel, RunnerWebApiModel } from '@/app/api/types';
-import BenchmarkRunsView from '@/app/benchmarking/components/benchmarkRunsView';
+import { RunsView } from '@/app/components/runsView';
+import { benchmarkRunsViewConfig } from '@/app/config/testingConfigs';
 import { ErrorWithMessage, toErrorWithMessage } from '@/app/lib/error-utils';
 import { ApiResult, processResponse } from '@/app/lib/http-requests';
 import config from '@/moonshot.config';
@@ -80,7 +81,8 @@ export default async function BenchmarkRunsPage() {
   }
 
   return (
-    <BenchmarkRunsView
+    <RunsView
+      {...benchmarkRunsViewConfig}
       runners={result.data}
       resultIds={idsResult.data}
     />

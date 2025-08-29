@@ -4,7 +4,7 @@ type MoonshotConfig = {
   cookbookCategoriesTabs: {
     id: string;
     label: string;
-    categoryNames: string[];
+    data: string[];
   }[];
   cookbooksOrder: string[];
   webAPI: {
@@ -32,20 +32,16 @@ const config: MoonshotConfig = {
   ],
   cookbooksOrder: ['singapore-context', 'mlc-ai-safety'],
   cookbookCategoriesTabs: [
-    { id: 'capability', label: 'Capability', categoryNames: ['capability'] },
+    { id: 'capability', label: 'Capability', data: ['Capability'] },
     {
       id: 'trustAndSafety',
       label: 'Trust & Safety',
-      categoryNames: ['Trust & Safety'],
+      data: ['Trust & Safety'],
     },
     {
       id: 'others',
       label: 'Others',
-      categoryNames: [
-        'exclude:capability',
-        'exclude:Trust & Safety',
-        'exclude:agentic',
-      ],
+      data: ['exclude:Capability', 'exclude:Trust & Safety', 'exclude:agentic'],
     },
   ],
   estimatedPromptResponseTime: 1, // seconds

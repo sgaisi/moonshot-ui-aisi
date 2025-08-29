@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from 'next/navigation';
-import AgenticRunsView from '@/app/agentic/components/agenticRunsView';
+import { RunsView } from '@/app/components/runsView';
+import { agenticRunsViewConfig } from '@/app/config/testingConfigs';
 
 jest.mock('next/link', () => {
   return {
@@ -79,7 +80,8 @@ it('renders AgenticRunsView', async () => {
   }));
   mockGetParam.mockReturnValue(undefined);
   render(
-    <AgenticRunsView
+    <RunsView
+      {...agenticRunsViewConfig}
       runners={mockAgenticRunners}
       resultIds={mockAgenticResultIds}
     />
@@ -107,7 +109,8 @@ it('displays agentic-specific runner information', () => {
   }));
   mockGetParam.mockReturnValue(undefined);
   render(
-    <AgenticRunsView
+    <RunsView
+      {...agenticRunsViewConfig}
       runners={mockAgenticRunners}
       resultIds={mockAgenticResultIds}
     />

@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AgenticCookbooksSelection } from '@/app/agentic/components/agenticCookbooksSelection';
+import { CookbookSelector } from '@/app/components/cookbookSelector/cookbookSelector';
+import { agenticCookbookSelectorConfig } from '@/app/config/testingConfigs';
 import { CookbooksProvider } from '@/app/benchmarking/contexts/cookbooksContext';
 import { useGetCookbooksQuery } from '@/app/services/cookbook-api-service';
 import { useGetAllRecipesQuery } from '@/app/services/recipe-api-service';
@@ -132,7 +133,8 @@ describe('AgenticCookbooksSelection', () => {
       () => mockAlreadySelectedCookbooks
     );
     renderWithProviders(
-      <AgenticCookbooksSelection
+      <CookbookSelector
+        {...agenticCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -198,7 +200,8 @@ describe('AgenticCookbooksSelection', () => {
       () => mockNoSelectedCookbooks
     );
     const { rerender } = renderWithProviders(
-      <AgenticCookbooksSelection
+      <CookbookSelector
+        {...agenticCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -226,7 +229,8 @@ describe('AgenticCookbooksSelection', () => {
         () => [mockAgenticCookbooks[0]] // simulate 1 cookbook selected
       );
       rerender(
-        <AgenticCookbooksSelection
+        <CookbookSelector
+          {...agenticCookbookSelectorConfig}
           onCookbookSelected={mockOnCookbookSelected}
           onCookbookUnselected={mockOnCookbookUnselected}
           onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -252,7 +256,8 @@ describe('AgenticCookbooksSelection', () => {
       isFetching: false,
     });
     renderWithProviders(
-      <AgenticCookbooksSelection
+      <CookbookSelector
+        {...agenticCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -274,7 +279,8 @@ describe('AgenticCookbooksSelection', () => {
       () => mockNoSelectedCookbooks
     );
     renderWithProviders(
-      <AgenticCookbooksSelection
+      <CookbookSelector
+        {...agenticCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}

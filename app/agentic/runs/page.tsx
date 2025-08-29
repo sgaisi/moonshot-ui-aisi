@@ -1,5 +1,6 @@
 import { RunnerDetailWebApiModel, RunnerWebApiModel } from '@/app/api/types';
-import AgenticRunsView from '@/app/agentic/components/agenticRunsView';
+import { RunsView } from '@/app/components/runsView';
+import { agenticRunsViewConfig } from '@/app/config/testingConfigs';
 import { ErrorWithMessage, toErrorWithMessage } from '@/app/lib/error-utils';
 import { ApiResult, processResponse } from '@/app/lib/http-requests';
 import config from '@/moonshot.config';
@@ -93,7 +94,8 @@ export default async function AgenticRunsPage() {
   }
 
   return (
-    <AgenticRunsView
+    <RunsView
+      {...agenticRunsViewConfig}
       runners={result.data}
       resultIds={idsResult.data}
     />

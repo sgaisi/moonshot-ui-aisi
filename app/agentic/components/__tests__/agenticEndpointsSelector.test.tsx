@@ -1,6 +1,6 @@
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AgenticEndpointSelector } from '@/app/agentic/components/agenticEndpointsSelector';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { useModelsList } from '@/app/hooks/useLLMEndpointList';
 
 const mockAgenticEndpoints: LLMEndpoint[] = [
@@ -49,7 +49,7 @@ describe('AgenticEndpointSelector', () => {
     }));
 
     render(
-      <AgenticEndpointSelector
+      <EndpointsSelector
         totalSelected={0}
         selectedModels={[]}
         onModelClick={mockModelClickHandler}
@@ -69,7 +69,7 @@ describe('AgenticEndpointSelector', () => {
     }));
 
     render(
-      <AgenticEndpointSelector
+      <EndpointsSelector
         totalSelected={0}
         selectedModels={[]}
         onModelClick={mockModelClickHandler}
@@ -92,7 +92,7 @@ describe('AgenticEndpointSelector', () => {
     }));
 
     render(
-      <AgenticEndpointSelector
+      <EndpointsSelector
         totalSelected={1}
         selectedModels={[mockAgenticEndpoints[1]]}
         onModelClick={mockModelClickHandler}
@@ -137,7 +137,7 @@ describe('AgenticEndpointSelector', () => {
     }));
 
     render(
-      <AgenticEndpointSelector
+      <EndpointsSelector
         totalSelected={1}
         selectedModels={[mockAgenticEndpoints[0]]}
         onModelClick={mockModelClickHandler}
