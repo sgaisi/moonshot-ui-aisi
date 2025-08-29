@@ -129,7 +129,10 @@ jest.mock('@/app/services/agentic-api-service', () => ({
 }));
 
 jest.mock('@/app/services/agentic-status-api-service', () => ({
-  useGetAgenticStatusQuery: jest.fn(),
+  useGetAgenticStatusQuery: jest.fn().mockReturnValue({
+    data: {},
+    isLoading: false,
+  }),
 }));
 
 jest.mock('@/app/services/cookbook-api-service', () => ({
@@ -179,15 +182,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   jest.clearAllMocks();
-
-  // Setup agentic status query mock that was missing
-  const agenticStatusModule = jest.requireActual(
-    '@/app/services/agentic-status-api-service'
-  );
-  (agenticStatusModule.useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
-    data: mockTestStatuses,
-    isLoading: false,
-  });
 });
 
 it('should display the "in progress" status and agentic test details', async () => {
@@ -200,6 +194,15 @@ it('should display the "in progress" status and agentic test details', async () 
     data: mockTestStatuses,
     isLoading: false,
   }));
+
+  // Import the mock and update it for this test
+  const { useGetAgenticStatusQuery } = jest.requireMock(
+    '@/app/services/agentic-status-api-service'
+  );
+  (useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
+    data: mockTestStatuses,
+    isLoading: false,
+  });
   const mockDispatch = jest.fn();
   (useAppDispatch as jest.Mock).mockImplementation(() => mockDispatch);
   const mockResetAgenticCookbooks = jest.fn();
@@ -276,6 +279,15 @@ it('should display the "completed" status for agentic tests', async () => {
     data: mockTestStatuses,
     isLoading: false,
   }));
+
+  // Import the mock and update it for this test
+  const { useGetAgenticStatusQuery } = jest.requireMock(
+    '@/app/services/agentic-status-api-service'
+  );
+  (useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
+    data: mockTestStatuses,
+    isLoading: false,
+  });
   const { rerender } = render(
     <AgenticRunStatus allStatuses={mockTestStatuses} />
   );
@@ -327,6 +339,15 @@ it('should display the "cancelled" status for agentic tests', async () => {
     data: mockTestStatuses,
     isLoading: false,
   }));
+
+  // Import the mock and update it for this test
+  const { useGetAgenticStatusQuery } = jest.requireMock(
+    '@/app/services/agentic-status-api-service'
+  );
+  (useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
+    data: mockTestStatuses,
+    isLoading: false,
+  });
   const { rerender } = render(
     <AgenticRunStatus allStatuses={mockTestStatuses} />
   );
@@ -369,6 +390,15 @@ it('should display the "errored" status for agentic tests', async () => {
     data: mockTestStatuses,
     isLoading: false,
   }));
+
+  // Import the mock and update it for this test
+  const { useGetAgenticStatusQuery } = jest.requireMock(
+    '@/app/services/agentic-status-api-service'
+  );
+  (useGetAgenticStatusQuery as jest.Mock).mockReturnValue({
+    data: mockTestStatuses,
+    isLoading: false,
+  });
   const { rerender } = render(
     <AgenticRunStatus allStatuses={mockTestStatuses} />
   );
