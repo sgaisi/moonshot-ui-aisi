@@ -6,7 +6,6 @@ import { colors } from '@/app/customColors';
 
 type menuItem =
   | 'benchmarking'
-  | 'agentic'
   | 'redteaming'
   | 'endpoints'
   | 'history'
@@ -64,30 +63,6 @@ function LeftNav({ activeItem }: LeftNavProps) {
                   : colors.moongray[300]
             }
             name={IconName.CheckList}
-            size={40}
-          />
-        </Link>
-      </li>
-      <li className="flex justify-center">
-        <Link
-          href="/agentic"
-          onMouseEnter={() => setHoveredItem('agentic')}
-          onMouseLeave={() => setHoveredItem(undefined)}
-          className="relative">
-          {(hoveredItem === 'agentic' || activeItem === 'agentic') && (
-            <p className="absolute tracking-wider text-moonpurplelight right-[50px] w-[200px] text-right">
-              agentic testing
-            </p>
-          )}
-          <Icon
-            color={
-              activeItem === 'agentic'
-                ? colors.moonpurplelight
-                : hoveredItem === 'agentic'
-                  ? colors.moonpurplelight
-                  : colors.moongray[300]
-            }
-            name={IconName.RunCookbook}
             size={40}
           />
         </Link>

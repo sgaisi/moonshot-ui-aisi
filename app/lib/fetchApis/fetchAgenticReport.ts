@@ -1,13 +1,13 @@
-import { CookbooksAgenticResult } from '@/app/agentic/report/types/agenticReportTypes';
+import { CookbooksBenchmarkResult } from '@/app/benchmarking/report/types/benchmarkReportTypes';
 import { ErrorWithMessage } from '@/app/lib/error-utils';
 import { ApiResult, processResponse } from '@/app/lib/http-requests';
 import config from '@/moonshot.config';
 
 export async function fetchAgenticReport(
   id: string
-): Promise<ApiResult<CookbooksAgenticResult> | ErrorWithMessage> {
+): Promise<ApiResult<CookbooksBenchmarkResult> | ErrorWithMessage> {
   const response = await fetch(
-    `${config.webAPI.hostURL}${config.webAPI.basePathAgentic}/results/${id}`,
+    `${config.webAPI.hostURL}${config.webAPI.basePathBenchmarks}/results/${id}`,
     {
       method: 'GET',
       headers: {
@@ -16,9 +16,9 @@ export async function fetchAgenticReport(
     }
   );
 
-  const result = await processResponse<CookbooksAgenticResult>(response);
+  const result = await processResponse<CookbooksBenchmarkResult>(response);
   if ('message' in result) {
     return result as ErrorWithMessage;
   }
-  return result as ApiResult<CookbooksAgenticResult>;
+  return result as ApiResult<CookbooksBenchmarkResult>;
 }

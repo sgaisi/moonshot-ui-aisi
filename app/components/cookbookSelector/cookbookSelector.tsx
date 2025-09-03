@@ -74,48 +74,50 @@ function CookbookSelector(props: CookbookSelectorProps) {
       { skip: !isFirstCookbooksFetch }
     );
 
-  // Build query parameters based on mode and active tab
+  // Build query parameters based on active tab
   const buildQueryParams = () => {
-    if (mode === 'agentic') {
+    // Handle agentic tab (uses tags filtering)
+    if (activeTab.id === 'agentic') {
       return {
         count: true,
-        tags: activeTab.id === 'agentic' ? ['agentic'] : undefined,
-      };
-    } else {
-      // Benchmark mode logic
-      const excludedCategories = activeTab.data
-        ? activeTab.data.reduce<string[]>((acc, cat) => {
-            if (cat.startsWith('exclude:')) {
-              acc.push(cat.split(':')[1]);
-            }
-            return acc;
-          }, [])
-        : undefined;
-      const selectedCategories =
-        activeTab.data && excludedCategories
-          ? activeTab.data.filter(
-              (cat) =>
-                !excludedCategories.includes(cat) && !cat.startsWith('exclude:')
-            )
-          : activeTab.data;
-
-      return {
-        categories:
-          selectedCategories && selectedCategories.length > 0
-            ? selectedCategories
-            : undefined,
-        categories_excluded:
-          excludedCategories && excludedCategories.length > 0
-            ? excludedCategories
-            : undefined,
-        count: true,
+        tags: ['agentic'],
       };
     }
+
+    // Handle all other tabs (uses categories filtering)
+    const excludedCategories = activeTab.data
+      ? activeTab.data.reduce<string[]>((acc, cat) => {
+          if (cat.startsWith('exclude:')) {
+            acc.push(cat.split(':')[1]);
+          }
+          return acc;
+        }, [])
+      : undefined;
+    const selectedCategories =
+      activeTab.data && excludedCategories
+        ? activeTab.data.filter(
+            (cat) =>
+              !excludedCategories.includes(cat) && !cat.startsWith('exclude:')
+          )
+        : activeTab.data;
+
+    return {
+      categories:
+        selectedCategories && selectedCategories.length > 0
+          ? selectedCategories
+          : undefined,
+      categories_excluded:
+        excludedCategories && excludedCategories.length > 0
+          ? excludedCategories
+          : undefined,
+      count: true,
+    };
   };
 
   const queryParams = buildQueryParams();
   const shouldSkipQuery =
     mode === 'benchmark' &&
+    activeTab.id !== 'agentic' &&
     (!queryParams.categories || queryParams.categories.length === 0) &&
     (!queryParams.categories_excluded ||
       queryParams.categories_excluded.length === 0);
@@ -232,9 +234,7 @@ function CookbookSelector(props: CookbookSelectorProps) {
                 <LoadingAnimation />
               ) : cookbooks.length === 0 ? (
                 <div className="text-white text-center w-full">
-                  {mode === 'agentic'
-                    ? 'No cookbooks found. Please ensure cookbooks are available in your data directory.'
-                    : 'No cookbooks found'}
+                  No cookbooks found
                 </div>
               ) : (
                 orderedCookbooks.map((cookbook) => {

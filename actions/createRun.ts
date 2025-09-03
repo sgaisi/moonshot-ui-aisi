@@ -7,17 +7,18 @@ import config from '@/moonshot.config';
 import { formatZodSchemaErrors } from './helpers/formatZodSchemaErrors';
 
 export async function createRun(
-  _: FormState<BenchmarkRunFormValues>,
+  _: FormState<BenchmarkRunFormValues | AgenticRunFormValues>,
   formData: FormData
 ) {
-  const benchmarkRunSchema = z.object({
+  // Create unified schema - backend handles routing based on runner_processing_module
+  const runSchema = z.object({
     run_name: z.string().min(1, 'Name is required'),
     description: z.string().optional(),
     prompt_selection_percentage: z.preprocess(
       (val) => Number(val),
       z
         .number()
-        .min(0, 'Prompt selection percentage must be at least 0')
+        .min(1, 'Prompt selection percentage must be at least 1')
         .max(100, 'Prompt selection percentage must be at most 100')
     ),
     inputs: z.array(z.string()).min(1, 'At least one cookbook is required'),
@@ -32,7 +33,7 @@ export async function createRun(
     system_prompt: z.string(),
   });
 
-  const result = benchmarkRunSchema.safeParse({
+  const result = runSchema.safeParse({
     run_name: formData.get('run_name'),
     description: formData.get('description'),
     prompt_selection_percentage: formData.get('prompt_selection_percentage'),
@@ -47,6 +48,7 @@ export async function createRun(
     return formatZodSchemaErrors(result.error as ZodError);
   }
 
+  // Use unified benchmark API endpoint - backend will route based on runner_processing_module
   const response = await fetch(
     `${config.webAPI.hostURL}${config.webAPI.basePathBenchmarks}?type=${BenchmarkCollectionType.COOKBOOK}`,
     {
@@ -101,5 +103,6 @@ export async function createRun(
     };
   }
 
+  // Always redirect to benchmarking (unified approach)
   redirect(`/benchmarking/session/run?runner_id=${responseBody.id}`);
 }
