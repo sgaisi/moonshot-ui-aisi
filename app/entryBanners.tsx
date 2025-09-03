@@ -97,7 +97,7 @@ function EntryBanners() {
                 />
               </Link>
               <Link
-                href="/agentic/session/new"
+                href="/benchmarking/session/new"
                 onClick={handleStartNewRunClick}>
                 <ActionCard
                   title="Test"

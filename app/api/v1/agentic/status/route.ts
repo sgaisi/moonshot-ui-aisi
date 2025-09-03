@@ -11,16 +11,14 @@ export async function POST(request: Request) {
     current_progress: body.current_progress,
     current_status: body.current_status,
   });
-  // Emit AGENTIC_UPDATE event instead of BENCHMARK_UPDATE
-  appEventBus.emit(AppEventTypes.AGENTIC_UPDATE, body);
-  return new Response(
-    JSON.stringify({ msg: 'Agentic updates sent to SSE writer' })
-  );
+  // Use unified BENCHMARK_UPDATE event for all testing types
+  appEventBus.emit(AppEventTypes.BENCHMARK_UPDATE, body);
+  return new Response(JSON.stringify({ msg: 'Updates sent to SSE writer' }));
 }
 
 export async function GET() {
   const response = await fetch(
-    `${config.webAPI.hostURL}${config.webAPI.basePathAgentic}/status`,
+    `${config.webAPI.hostURL}${config.webAPI.basePathBenchmarks}/status`,
     {
       method: 'GET',
     }
