@@ -347,6 +347,12 @@ type Runner = {
   description: string;
   runner_args?: CookbooksRunnerArgs;
   start_time?: number;
+  end_time?: number;
+  duration?: number;
+  status?: string;
+  error_messages?: string[];
+  results?: Record<string, unknown>;
+  raw_results?: Record<string, unknown>;
 };
 
 type ActionResponse<T> = {
