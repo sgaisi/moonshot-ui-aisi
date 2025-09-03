@@ -212,7 +212,7 @@ function CookbookSelector(props: CookbookSelectorProps) {
             </h2>
             <div className="flex flex-row gap-5 w-full">
               <TabsMenu
-                className="w-[445px]"
+                className="w-full md:w-[445px] flex-shrink-0"
                 tabItems={tabItems}
                 barColor={colors.moongray['800']}
                 tabHoverColor={colors.moongray['700']}
