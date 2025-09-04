@@ -207,23 +207,31 @@ function CookbookSelector(props: CookbookSelectorProps) {
       ) : (
         <React.Fragment>
           <section className="flex flex-col items-center justify-center gap-5 px-8">
-            <h2 className="text-[1.6rem] leading-[2rem] tracking-wide text-white w-full text-center">
+            <h2 className="text-[1.6rem] leading-[2rem] tracking-wide text-white text-center max-w-4xl mx-auto">
               Select the cookbooks you want to run
             </h2>
-            <div className="flex flex-row gap-5 w-full">
-              <TabsMenu
-                className="w-full md:w-[445px] flex-shrink-0"
-                tabItems={tabItems}
-                barColor={colors.moongray['800']}
-                tabHoverColor={colors.moongray['700']}
-                selectedTabColor={colors.moonpurple}
-                textColor={colors.white}
-                activeTabId={activeTab.id}
-                onTabClick={handleTabClick}
-              />
-              <p className="flex-1 text-white px-8 text-[0.9rem] min-h-[65px]">
-                {categoryDesc}
-              </p>
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 max-w-6xl mx-auto w-full items-center justify-center">
+              <div className="w-full lg:flex-1 max-w-2xl">
+                <TabsMenu
+                  className="flex justify-center"
+                  tabItems={tabItems}
+                  barColor={colors.moongray['800']}
+                  tabHoverColor={colors.moongray['700']}
+                  selectedTabColor={colors.moonpurple}
+                  textColor={colors.white}
+                  activeTabId={activeTab.id}
+                  onTabClick={handleTabClick}
+                  layout="responsive"
+                  compactMode={false}
+                />
+              </div>
+              {categoryDesc && (
+                <div className="w-full lg:w-auto lg:flex-1 lg:max-w-md">
+                  <p className="text-white px-4 lg:px-6 py-3 text-[0.9rem] min-h-[65px] bg-gray-800/30 rounded-lg text-center">
+                    {categoryDesc}
+                  </p>
+                </div>
+              )}
             </div>
           </section>
           <section

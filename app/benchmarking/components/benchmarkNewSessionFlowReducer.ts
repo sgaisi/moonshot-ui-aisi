@@ -107,10 +107,17 @@ export function benchmarkNewSessionFlowReducer(
       }
     case 'PREV_BTN_CLICK':
       if (state.view === BenchmarkNewSessionViews.BENCHMARK_RUN_FORM) {
+        // Check if the flow includes Configure Requirements step
+        const hasConfigRequirements = state.steps.includes(
+          'Configure Requirements'
+        );
+
         return {
           ...state,
-          stepIndex: state.stepIndex - 1,
-          view: BenchmarkNewSessionViews.COOKBOOKS_SELECTION,
+          stepIndex: hasConfigRequirements ? 2 : 1, // Configure Requirements (index 2) or Select Tests (index 1)
+          view: hasConfigRequirements
+            ? BenchmarkNewSessionViews.CONFIGURE_ADDITIONAL_REQUIREMENTS
+            : BenchmarkNewSessionViews.COOKBOOKS_SELECTION,
           hidePrevBtn: false,
           hideNextBtn: false,
           disableNextBtn: false,
