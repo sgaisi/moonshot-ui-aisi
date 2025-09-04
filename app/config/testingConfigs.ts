@@ -86,7 +86,7 @@ const enhancedCategoryDescriptions = {
 const createEnhancedTabItems = (): TabItem<string[]>[] => {
   const agenticTab: TabItem<string[]> = {
     id: 'agentic',
-    label: 'Agentic Cookbooks',
+    label: 'Agentic',
     data: [],
   };
 
