@@ -337,8 +337,8 @@ function BenchmarkNewSessionFlow() {
                 ${!flowState.hidePrevBtn && !flowState.hideNextBtn ? 'justify-between' : ''} 
                 ${flowState.hidePrevBtn && !flowState.hideNextBtn ? 'justify-end' : ''} 
                 ${!flowState.hidePrevBtn && flowState.hideNextBtn ? 'justify-start' : ''} 
-                items-center w-full h-[60px] px-4
-             bg-moongray-950 shadow-[0_-2px_5px_-2px_rgba(0,0,0,0.3)] rounded-b-2xl`}>
+                items-center w-full h-[60px] px-4 mt-auto
+             bg-moongray-950 shadow-[0_-1px_3px_-1px_rgba(0,0,0,0.2)] rounded-b-2xl`}>
               {!flowState.hidePrevBtn ? (
                 <Button
                   ariaLabel="Previous View"
