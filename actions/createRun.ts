@@ -10,8 +10,7 @@ export async function createRun(
   _: FormState<BenchmarkRunFormValues>,
   formData: FormData
 ) {
-  // Create unified schema - backend handles routing based on runner_processing_module
-  const runSchema = z.object({
+  const benchmarkRunSchema = z.object({
     run_name: z.string().min(1, 'Name is required'),
     description: z.string().optional(),
     prompt_selection_percentage: z.preprocess(
@@ -33,7 +32,7 @@ export async function createRun(
     system_prompt: z.string(),
   });
 
-  const result = runSchema.safeParse({
+  const result = benchmarkRunSchema.safeParse({
     run_name: formData.get('run_name'),
     description: formData.get('description'),
     prompt_selection_percentage: formData.get('prompt_selection_percentage'),
@@ -48,7 +47,6 @@ export async function createRun(
     return formatZodSchemaErrors(result.error as ZodError);
   }
 
-  // Use unified benchmark API endpoint - backend will route based on runner_processing_module
   const response = await fetch(
     `${config.webAPI.hostURL}${config.webAPI.basePathBenchmarks}?type=${BenchmarkCollectionType.COOKBOOK}`,
     {
@@ -103,6 +101,5 @@ export async function createRun(
     };
   }
 
-  // Always redirect to benchmarking (unified approach)
   redirect(`/benchmarking/session/run?runner_id=${responseBody.id}`);
 }
