@@ -7,7 +7,7 @@ import config from '@/moonshot.config';
 import { formatZodSchemaErrors } from './helpers/formatZodSchemaErrors';
 
 export async function createRun(
-  _: FormState<BenchmarkRunFormValues | AgenticRunFormValues>,
+  _: FormState<BenchmarkRunFormValues>,
   formData: FormData
 ) {
   // Create unified schema - backend handles routing based on runner_processing_module
