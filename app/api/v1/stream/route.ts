@@ -31,14 +31,14 @@ export async function GET() {
   const encoder = new TextEncoder();
   const sseWriter = getSSEWriter(writer, encoder);
 
-  const totalBenchmarkListeners = appEventBus.listenerCount(
+  const totalListeners = appEventBus.listenerCount(
     AppEventTypes.BENCHMARK_UPDATE
   );
-  if (totalBenchmarkListeners === appEventBus.getMaxListeners() - 1) {
+  if (totalListeners === appEventBus.getMaxListeners() - 1) {
     bmEmitters[0].removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
     bmEmitters.shift();
   }
-  if (totalBenchmarkListeners === appEventBus.getMaxListeners()) {
+  if (totalListeners === appEventBus.getMaxListeners()) {
     console.log(
       'Max number of listeners reached for: ',
       AppEventTypes.BENCHMARK_UPDATE
