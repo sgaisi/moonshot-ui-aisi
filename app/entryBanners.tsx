@@ -96,18 +96,6 @@ function EntryBanners() {
                   actionText="Run Benchmarks"
                 />
               </Link>
-              <Link
-                href="/benchmarking/session/new"
-                onClick={handleStartNewRunClick}>
-                <ActionCard
-                  title="Test"
-                  description="agentic capabilities"
-                  descriptionColor={colors.moongray[300]}
-                  cardColor={colors.moongray[950]}
-                  iconName={IconName.Tools}
-                  actionText="Run Agentic Tests"
-                />
-              </Link>
               <Link href="/benchmarking/cookbooks/new">
                 <ActionCard
                   title="Create"

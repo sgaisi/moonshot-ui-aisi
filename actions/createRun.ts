@@ -17,7 +17,7 @@ export async function createRun(
       (val) => Number(val),
       z
         .number()
-        .min(1, 'Prompt selection percentage must be at least 1')
+        .min(0, 'Prompt selection percentage must be at least 0')
         .max(100, 'Prompt selection percentage must be at most 100')
     ),
     inputs: z.array(z.string()).min(1, 'At least one cookbook is required'),

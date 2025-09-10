@@ -1,9 +1,6 @@
 export const proxyPathBenchmarksExec = 'api/v1/benchmarks';
 export const proxyPathBenchmarksGetStatus = 'api/v1/benchmarks/status';
 export const proxyPathBenchmarksGetResults = 'api/v1/benchmarks/results';
-export const proxyPathAgenticExec = 'api/v1/agentic';
-export const proxyPathAgenticGetStatus = 'api/v1/agentic/status';
-export const proxyPathAgenticGetResults = 'api/v1/agentic/results';
 export const proxyPathConnectors = 'api/v1/connectors';
 export const proxyPathContextStrats = 'api/v1/context-strategies';
 export const proxyPathSessions = 'api/v1/sessions';
