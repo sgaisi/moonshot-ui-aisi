@@ -1,7 +1,6 @@
 import { MenuItem } from '@/app/components/testingHomePage';
 import { CookbookSelectorConfig } from '@/app/components/cookbookSelector/cookbookSelector';
 import { RunFormConfig } from '@/app/components/runForm';
-import { RunsViewConfig } from '@/app/components/runsView';
 import { RunStatusConfig } from '@/app/components/runStatus/runStatus';
 import { IconName } from '@/app/components/IconSVG';
 import { TabItem } from '@/app/components/tabsMenu';
@@ -70,8 +69,8 @@ export const redteamingConfig: { title: string; menuItems: MenuItem[] } = {
   ],
 };
 
-// Enhanced cookbook selector configuration that includes agentic support
-const enhancedCategoryDescriptions = {
+// Category descriptions including agentic support
+const categoryDescriptions = {
   capability:
     "Capability assesses the AI model's ability to perform within the context of the unique requirements and challenges of a particular domain or task.",
   trustAndSafety:
@@ -82,21 +81,20 @@ const enhancedCategoryDescriptions = {
     'Other available cookbooks that can be used for benchmarking. Select the cookbooks that best fit your testing requirements.',
 };
 
-// Create enhanced tab items that include agentic
-const createEnhancedTabItems = (): TabItem<string[]>[] => {
+// Simple function to add agentic tab to existing cookbook tabs
+const createTabsWithAgentic = (): TabItem<string[]>[] => {
   const agenticTab: TabItem<string[]> = {
     id: 'agentic',
     label: 'Agentic',
     data: [],
   };
-
   return [...config.cookbookCategoriesTabs, agenticTab];
 };
 
 export const benchmarkCookbookSelectorConfig: CookbookSelectorConfig = {
   mode: 'benchmark',
-  tabItems: createEnhancedTabItems(),
-  categoryDescriptions: enhancedCategoryDescriptions,
+  tabItems: createTabsWithAgentic(),
+  categoryDescriptions: categoryDescriptions,
   reduxSelector: (state: Record<string, unknown>) =>
     (state as { benchmarkCookbooks: { entities: Cookbook[] } })
       .benchmarkCookbooks.entities,
@@ -107,92 +105,58 @@ export const benchmarkCookbookSelectorConfig: CookbookSelectorConfig = {
   },
 };
 
-// Enhanced RunForm configuration that supports both benchmark and agentic modes
-export const createRunFormConfig = (
-  mode: 'benchmark' | 'agentic'
-): RunFormConfig => {
-  const isAgentic = mode === 'agentic';
-
-  return {
-    mode,
-    formAction: createRun as (
-      prevState: unknown,
-      formData: FormData
-    ) => Promise<unknown>,
-    initialFormValues: {
-      formStatus: 'initial',
-      formErrors: undefined,
-      run_name: '',
-      description: '',
-      inputs: [],
-      endpoints: [],
-      prompt_selection_percentage: '1',
-      system_prompt: '',
-      runner_processing_module: isAgentic ? 'agentic' : 'benchmarking',
-      random_seed: isAgentic ? '1' : '0',
-    },
-    placeholders: {
-      name: isAgentic
-        ? 'Give this agentic session a unique name'
-        : 'Give this session a unique name',
-      description: isAgentic
-        ? 'Description of this agentic run'
-        : 'Description of this benchmark run',
-    },
-    defaultPercentage: 1,
-  };
+// Simplified RunForm configuration focused on benchmarking
+export const benchmarkRunFormConfig: RunFormConfig = {
+  mode: 'benchmark',
+  formAction: createRun as (
+    prevState: unknown,
+    formData: FormData
+  ) => Promise<unknown>,
+  initialFormValues: {
+    formStatus: 'initial',
+    formErrors: undefined,
+    run_name: '',
+    description: '',
+    inputs: [],
+    endpoints: [],
+    prompt_selection_percentage: '1',
+    system_prompt: '',
+    runner_processing_module: 'benchmarking',
+    random_seed: '0',
+  },
+  placeholders: {
+    name: 'Give this session a unique name',
+    description: 'Description of this benchmark run',
+  },
+  defaultPercentage: 1,
 };
 
-// For backward compatibility, keep the original exports
-export const benchmarkRunFormConfig: RunFormConfig =
-  createRunFormConfig('benchmark');
-
-// Enhanced RunsView configuration that supports filtering by mode
-export const createRunsViewConfig = (): RunsViewConfig => {
-  return {
-    mode: 'benchmark', // Always use benchmark mode for the UI
-    title: 'Past  Runs',
-    newSessionPath: '/benchmarking/session/new',
+// Simplified RunStatus configuration focused on benchmarking
+export const benchmarkRunStatusConfig: RunStatusConfig = {
+  mode: 'benchmark',
+  title: {
+    running: 'Running Tests...',
+    completed: 'Tests Completed',
+    cancelled: 'Tests Cancelled',
+    unknown: 'Test Status Unknown',
+  },
+  navigation: {
+    homePath: '/benchmarking',
     reportPath: '/benchmarking/report',
-    noRunnersErrorText: 'No past runs found',
-  };
+  },
+  eventType: AppEventTypes.BENCHMARK_UPDATE,
+  hooks: {
+    useStatusQuery: useGetAllStatusQuery as (
+      args?: unknown,
+      options?: unknown
+    ) => { data: unknown; isLoading: boolean },
+    useCancelMutation: useCancelBenchmarkMutation as () => [
+      unknown,
+      { isLoading: boolean },
+    ],
+  },
+  reduxActions: {
+    resetCookbooks: resetBenchmarkCookbooks,
+    resetModels: resetBenchmarkModels,
+  },
 };
-
-// For backward compatibility
-export const benchmarkRunsViewConfig: RunsViewConfig = createRunsViewConfig();
-
-// Enhanced RunStatus configuration that supports both modes
-export const createRunStatusConfig = (): RunStatusConfig => {
-  return {
-    mode: 'benchmark', // Always use benchmark mode for the UI
-    title: {
-      running: 'Running Tests...',
-      completed: 'Tests Completed',
-      cancelled: 'Tests Cancelled',
-      unknown: 'Test Status Unknown',
-    },
-    navigation: {
-      homePath: '/benchmarking',
-      reportPath: '/benchmarking/report',
-    },
-    eventType: AppEventTypes.BENCHMARK_UPDATE,
-    hooks: {
-      useStatusQuery: useGetAllStatusQuery as (
-        args?: unknown,
-        options?: unknown
-      ) => { data: unknown; isLoading: boolean },
-      useCancelMutation: useCancelBenchmarkMutation as () => [
-        unknown,
-        { isLoading: boolean },
-      ],
-    },
-    reduxActions: {
-      resetCookbooks: resetBenchmarkCookbooks,
-      resetModels: resetBenchmarkModels,
-    },
-  };
-};
-
-// For backward compatibility
-export const benchmarkRunStatusConfig: RunStatusConfig =
-  createRunStatusConfig();

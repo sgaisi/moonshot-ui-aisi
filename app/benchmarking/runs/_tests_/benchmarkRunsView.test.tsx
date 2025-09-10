@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from 'next/navigation';
-import { RunsView } from '@/app/components/runsView';
-import { benchmarkRunsViewConfig } from '@/app/config/testingConfigs';
+import BenchmarkRunsView from '@/app/benchmarking/components/benchmarkRunsView';
 
 jest.mock('next/link', () => {
   return {
@@ -80,8 +79,7 @@ it('renders BenchmarkRunsView', async () => {
   }));
   mockGetParam.mockReturnValue(undefined);
   render(
-    <RunsView
-      {...benchmarkRunsViewConfig}
+    <BenchmarkRunsView
       runners={mockRunners}
       resultIds={mockResultIds}
     />
