@@ -344,7 +344,7 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
         onCloseIconClick={() => router.push('/benchmarking')}
         height="100%"
         bgColor={colors.moongray['950']}>
-        <div className="flex flex-col items-center h-full gap-4 ipad11Inch:gap-1 ipadPro:gap-1">
+        <div className="flex flex-col items-center min-h-full gap-4 ipad11Inch:gap-1 ipadPro:gap-1 py-4">
           {showRunDetails && runnerData ? (
             <PopupSurface
               style={{

@@ -56,7 +56,7 @@ function EndpointsSelector(props: EndpointsSelectorProps) {
           onClick={onCreateClick}
         />
       </section>
-      <div className="relative flex flex-col min-h-[200px] px-[10%] w-[100%] h-full items-center">
+      <div className="relative flex flex-col min-h-[200px] w-[100%] h-full items-center">
         {isLoading ? (
           <div className="ring">
             Loading
@@ -64,7 +64,7 @@ function EndpointsSelector(props: EndpointsSelectorProps) {
           </div>
         ) : (
           <ul
-            className="flex flex-row flex-wrap gap-[2%] w-[100%] overflow-y-auto custom-scrollbar px-4"
+            className="flex flex-row flex-wrap gap-[2%] w-[100%] overflow-y-auto custom-scrollbar px-8"
             style={{ height: '100%' }}>
             {models.map((model) => {
               const isSelected =

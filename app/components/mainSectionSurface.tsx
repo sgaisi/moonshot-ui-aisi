@@ -67,8 +67,8 @@ function MainSectionSurface(props: MainSectionSurfaceProps) {
         {headerContent}
       </header>
       <section
-        style={{ height: bodyHeight }}
-        className={clsx('p-6', bodyClassName)}>
+        style={{ height: bodyHeight, overflowY: 'auto' }}
+        className={clsx('p-6 custom-scrollbar', bodyClassName)}>
         {children}
       </section>
       {showSurfaceOverlay && (
