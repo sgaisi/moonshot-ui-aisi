@@ -40,7 +40,8 @@ function CookbookSelectionItem(props: CookbookSelectionItemProps) {
       text-white hover:bg-moongray-800 hover:border-moonwine-700 text-[0.9rem] mb-[15px]"
       style={{
         transition: 'background-color 0.2s ease-in-out',
-        flexBasis: '49%',
+        flexBasis: 'calc(50% - 1%)',
+        maxWidth: 'calc(50% - 1%)',
         ...(isSelected
           ? {
               backgroundColor: colors.moongray['800'],

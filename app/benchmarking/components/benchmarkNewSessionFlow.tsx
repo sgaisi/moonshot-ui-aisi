@@ -338,7 +338,7 @@ function BenchmarkNewSessionFlow() {
                 ${flowState.hidePrevBtn && !flowState.hideNextBtn ? 'justify-end' : ''} 
                 ${!flowState.hidePrevBtn && flowState.hideNextBtn ? 'justify-start' : ''} 
                 items-center w-full h-[60px] px-4 mt-auto
-             bg-moongray-950 shadow-[0_-1px_3px_-1px_rgba(0,0,0,0.2)] rounded-b-2xl`}>
+             bg-moongray-950 shadow-[0_-1px_3px_-1px_rgba(0,0,0,0.2)] rounded-b-2xl relative z-10`}>
               {!flowState.hidePrevBtn ? (
                 <Button
                   ariaLabel="Previous View"

@@ -235,9 +235,9 @@ function CookbookSelector(props: CookbookSelectorProps) {
             </div>
           </section>
           <section
-            className="relative flex flex-col gap-7 mt-8 h-full"
+            className="relative flex flex-col mt-8 overflow-y-auto custom-scrollbar"
             style={{ height: 'calc(100% - 155px)' }}>
-            <ul className="flex flex-row flex-wrap grow gap-[2%] w-[100%] overflow-y-auto custom-scrollbar px-8">
+            <ul className="flex flex-row flex-wrap gap-[2%] w-[100%] px-8 pb-4">
               {isFetching ? (
                 <LoadingAnimation />
               ) : cookbooks.length === 0 ? (
