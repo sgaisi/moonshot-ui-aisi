@@ -50,10 +50,11 @@ function EntryBanners() {
         <section className="mb-[2%]">
           <div className="relative">
             {/* Background Shadow Layer */}
-            <div className="absolute inset-0 bg-gradient-to-r from-moonwine-800/20 to-moonwine-700/20 rounded-lg blur-xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-moonwine-800/20 to-moonwine-700/20 rounded-2xl blur-xl -z-10" />
             {/* Main Banner with Glass Effect */}
-            <div className="relative bg-gradient-to-r from-moongray-800/90 to-moongray-700/90 backdrop-blur-sm border border-moonwine-600/30 rounded-lg shadow-2xl">
+            <div className="relative bg-gradient-to-r from-moongray-800/90 to-moongray-700/90 backdrop-blur-sm border border-moonwine-600/30 rounded-2xl shadow-2xl overflow-hidden">
               <Banner
+                className="!rounded-none !shadow-none"
                 bannerColor="transparent"
                 textColor={colors.white}
                 buttonColor={colors.imdalight[980]}
