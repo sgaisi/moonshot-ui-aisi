@@ -45,14 +45,34 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-export async function GET() {
+export async function GET(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
   const encoder = new TextEncoder();
   const sseWriter: Writer | undefined = getSSEWriter(writer, encoder);
 
+  let connectionClosed = false;
+
+  // Detect when client closes connection
+  request.signal.addEventListener('abort', () => {
+    console.log('Client disconnected from ART SSE stream');
+    connectionClosed = true;
+    emitter.removeAllListeners(AppEventTypes.REDTEAM_UPDATE);
+    const index = artEmitters.indexOf(emitter);
+    if (index > -1) {
+      artEmitters.splice(index, 1);
+    }
+    writer.close().catch((err) => {
+      console.error('Error closing writer:', err);
+    });
+  });
+
   function handleRedTeamUpdate(data: ArtStatus) {
-    let errorCount = 0;
+    // Check if connection is still alive
+    if (connectionClosed) {
+      return;
+    }
+
     console.debug('ART Data received from webhook', {
       runner_id: data.current_runner_id,
       current_status: data.current_status,
@@ -70,14 +90,12 @@ export async function GET() {
       }
     } catch (error) {
       console.error('Error handling REDTEAM_UPDATE event', error);
-      errorCount++; // Increment error count
-      if (errorCount === 20) {
-        emitter.removeAllListeners(AppEventTypes.REDTEAM_UPDATE);
-        errorCount = 0; // Reset error count after 10 occurrences
-        const index = artEmitters.indexOf(emitter);
-        if (index > -1) {
-          artEmitters.splice(index, 1);
-        }
+      // Immediately clean up on write error
+      connectionClosed = true;
+      emitter.removeAllListeners(AppEventTypes.REDTEAM_UPDATE);
+      const index = artEmitters.indexOf(emitter);
+      if (index > -1) {
+        artEmitters.splice(index, 1);
       }
     }
   }
@@ -104,6 +122,10 @@ export async function GET() {
     }
   );
   artEmitters.push(emitter);
+
+  console.log(
+    `ART SSE Connection established. Active connections: ${artEmitters.length}/${MAX_LISTENERS}`
+  );
 
   // Heartbeat mechanism
   // const heartbeatInterval = setInterval(() => {

@@ -25,11 +25,27 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-export async function GET() {
+export async function GET(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
   const encoder = new TextEncoder();
   const sseWriter = getSSEWriter(writer, encoder);
+
+  let connectionClosed = false;
+
+  // Detect when client closes connection
+  request.signal.addEventListener('abort', () => {
+    console.log('Client disconnected from BM SSE stream');
+    connectionClosed = true;
+    emitter.removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
+    const index = bmEmitters.indexOf(emitter);
+    if (index > -1) {
+      bmEmitters.splice(index, 1);
+    }
+    writer.close().catch((err) => {
+      console.error('Error closing writer:', err);
+    });
+  });
 
   const totalListeners = appEventBus.listenerCount(
     AppEventTypes.BENCHMARK_UPDATE
@@ -49,7 +65,11 @@ export async function GET() {
   const emitter = appEventBus.on(
     AppEventTypes.BENCHMARK_UPDATE,
     (data: TestStatus) => {
-      let errorCount = 0;
+      // Check if connection is still alive
+      if (connectionClosed) {
+        return;
+      }
+
       console.debug('Data received from webhook', {
         runner_id: data.current_runner_id,
         current_progress: data.current_progress,
@@ -69,20 +89,21 @@ export async function GET() {
         }
       } catch (error) {
         console.error('Error writing webhook data to SSE stream', error);
-        errorCount++; // Increment error count
-
-        if (errorCount === 20) {
-          emitter.removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
-          errorCount = 0; // Reset error count after 10 occurrences
-          const index = bmEmitters.indexOf(emitter);
-          if (index > -1) {
-            bmEmitters.splice(index, 1);
-          }
+        // Immediately clean up on write error
+        connectionClosed = true;
+        emitter.removeAllListeners(AppEventTypes.BENCHMARK_UPDATE);
+        const index = bmEmitters.indexOf(emitter);
+        if (index > -1) {
+          bmEmitters.splice(index, 1);
         }
       }
     }
   );
   bmEmitters.push(emitter);
+
+  console.log(
+    `BM SSE Connection established. Active connections: ${bmEmitters.length}/${appEventBus.getMaxListeners()}`
+  );
 
   // Heartbeat mechanism
   // const heartbeatInterval = setInterval(() => {
