@@ -123,10 +123,6 @@ export async function GET(request: Request) {
   );
   artEmitters.push(emitter);
 
-  console.log(
-    `ART SSE Connection established. Active connections: ${artEmitters.length}/${MAX_LISTENERS}`
-  );
-
   // Heartbeat mechanism
   // const heartbeatInterval = setInterval(() => {
   //   try {

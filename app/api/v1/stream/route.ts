@@ -101,10 +101,6 @@ export async function GET(request: Request) {
   );
   bmEmitters.push(emitter);
 
-  console.log(
-    `BM SSE Connection established. Active connections: ${bmEmitters.length}/${appEventBus.getMaxListeners()}`
-  );
-
   // Heartbeat mechanism
   // const heartbeatInterval = setInterval(() => {
   //   console.log('sending BM SSE heartbeat');
