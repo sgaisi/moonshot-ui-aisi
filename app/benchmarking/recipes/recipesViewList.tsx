@@ -365,7 +365,7 @@ function RecipesViewList({
       <main
         className="flex flex-col gap-3"
         style={{
-          height: 'calc(100% - 135px)',
+          height: 'calc(100% - 200px)', // Account for footer and proper spacing
         }}>
         <SelectedRecipesPills
           maxHeight="100px"
@@ -450,7 +450,7 @@ function RecipesViewList({
             </p>
           </section>
         </section>
-        <footer className="flex justify-end gap-2 mt-2">
+        <footer className="flex justify-end gap-2 mt-2 p-4 bg-moongray-950 rounded-b-2xl shadow-[0_-1px_3px_-1px_rgba(0,0,0,0.2)]">
           <Button
             width={120}
             mode={ButtonType.OUTLINE}

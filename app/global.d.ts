@@ -179,7 +179,7 @@ type BenchmarkRunFormValues = {
   description: string;
   prompt_selection_percentage: string;
   system_prompt: string;
-  runner_processing_module: 'benchmarking';
+  runner_processing_module: 'benchmarking' | 'agentic';
   inputs: string[];
   endpoints: string[];
   random_seed: string;
@@ -336,6 +336,12 @@ type Runner = {
   description: string;
   runner_args?: CookbooksRunnerArgs;
   start_time?: number;
+  end_time?: number;
+  duration?: number;
+  status?: string;
+  error_messages?: string[];
+  results?: Record<string, unknown>;
+  raw_results?: Record<string, unknown>;
 };
 
 type ActionResponse<T> = {

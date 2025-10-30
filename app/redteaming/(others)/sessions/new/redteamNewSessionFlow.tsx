@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { EndpointSelector } from '@/app/benchmarking/components/endpointsSelector';
+import { EndpointsSelector } from '@/app/components/endpointsSelector';
 import { Icon, IconName } from '@/app/components/IconSVG';
 import { Button, ButtonType } from '@/app/components/button';
 import { MainSectionSurface } from '@/app/components/mainSectionSurface';
@@ -147,7 +147,7 @@ function RedteamNewSessionFlow() {
   switch (flowState.view) {
     case RedteamingNewSessionViews.ENDPOINTS_SELECTION:
       view = (
-        <EndpointSelector
+        <EndpointsSelector
           selectedModels={selectedModels}
           totalSelected={selectedModels.length}
           onModelClick={handleModelClick}

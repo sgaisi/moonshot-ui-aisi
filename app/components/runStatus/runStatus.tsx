@@ -12,19 +12,53 @@ import { PopupSurface } from '@/app/components/popupSurface';
 import { colors } from '@/app/customColors';
 import { useEventSource } from '@/app/hooks/use-eventsource';
 import { useIsResponsiveBreakpoint } from '@/app/hooks/useIsResponsiveBreakpoint';
-import { useCancelBenchmarkMutation } from '@/app/services/benchmark-api-service';
 import { useGetCookbooksQuery } from '@/app/services/cookbook-api-service';
 import { useGetLLMEndpointsQuery } from '@/app/services/llm-endpoint-api-service';
 import { useGetRunnerByIdQuery } from '@/app/services/runner-api-service';
-import { useGetAllStatusQuery } from '@/app/services/status-api-service';
 import { AppEventTypes, TestStatusProgress } from '@/app/types/enums';
-import {
-  resetBenchmarkCookbooks,
-  resetBenchmarkModels,
-  useAppDispatch,
-} from '@/lib/redux';
+import { useAppDispatch } from '@/lib/redux';
 
-function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
+export type RunStatusMode = 'agentic' | 'benchmark';
+
+export interface RunStatusConfig {
+  mode: RunStatusMode;
+  title: {
+    running: string;
+    completed: string;
+    cancelled: string;
+    unknown: string;
+  };
+  navigation: {
+    homePath: string;
+    reportPath: string;
+  };
+  eventType: AppEventTypes;
+  hooks: {
+    useStatusQuery: (
+      args?: unknown,
+      options?: unknown
+    ) => { data: unknown; isLoading: boolean };
+    useCancelMutation: () => [unknown, { isLoading: boolean }];
+  };
+  reduxActions: {
+    resetCookbooks: () => { type: string };
+    resetModels: () => { type: string };
+  };
+}
+
+interface RunStatusProps extends RunStatusConfig {
+  allStatuses: TestStatuses;
+}
+
+function RunStatus({
+  mode,
+  title,
+  navigation,
+  eventType,
+  hooks,
+  reduxActions,
+  allStatuses,
+}: RunStatusProps) {
   const [showRunDetails, setShowRunDetails] = React.useState(false);
   const [isCancelBtnDisabled, setIsCancelBtnDisabled] = React.useState(false);
   const [recipesStats, setRecipesStats] = React.useState<RecipeStats[]>([]);
@@ -34,12 +68,27 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
   const [eventData, closeEventSource] = useEventSource<
     TestStatus,
     AppEventTypes
-  >('/api/v1/stream', AppEventTypes.BENCHMARK_UPDATE);
-  const { data = {}, isLoading } = useGetAllStatusQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-  const [triggerCancelBenchmark, { isLoading: isCancelling }] =
-    useCancelBenchmarkMutation();
+  >('/api/v1/stream', eventType);
+
+  const { data = {}, isLoading } = hooks?.useStatusQuery
+    ? hooks.useStatusQuery(undefined, {
+        refetchOnMountOrArgChange: true,
+      })
+    : { data: {}, isLoading: false };
+
+  // Fallback: if status fails, at least show the initial status
+  const effectiveStatuses =
+    data && Object.keys(data as Record<string, unknown>).length > 0
+      ? (data as TestStatuses)
+      : allStatuses;
+  const [triggerCancel, { isLoading: isCancelling }] = hooks?.useCancelMutation
+    ? hooks.useCancelMutation()
+    : [
+        () => {
+          /* no-op */
+        },
+        { isLoading: false },
+      ];
   const router = useRouter();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
@@ -84,18 +133,29 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
   }, [eventData]);
 
   React.useEffect(() => {
-    if (!isLoading && data) {
-      setStatuses(data);
+    if (!isLoading) {
+      if (effectiveStatuses && Object.keys(effectiveStatuses).length > 0) {
+        setStatuses(effectiveStatuses);
+      } else if (mode === 'agentic') {
+        // Agentic mode specific handling
+        console.warn(
+          `No status found for agentic tests. Runner ID: ${runner_id}`
+        );
+        console.warn('Available statuses:', effectiveStatuses);
+      } else {
+        // Benchmark mode
+        setStatuses(effectiveStatuses);
+      }
     }
-  }, [isLoading]);
+  }, [isLoading, effectiveStatuses, runner_id, mode]);
 
   React.useEffect(() => {
-    dispatch(resetBenchmarkCookbooks());
-    dispatch(resetBenchmarkModels());
+    dispatch(reduxActions.resetCookbooks());
+    dispatch(reduxActions.resetModels());
     return () => {
       closeEventSource();
     };
-  }, []);
+  }, [dispatch, reduxActions, closeEventSource]);
 
   React.useEffect(() => {
     if (!cookbooksData) return;
@@ -119,47 +179,112 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
   const calcPercentageAtEachDataset = true;
 
   const userInputNumOfPromptsGrandTotal = React.useMemo(() => {
-    if (runnerData?.runner_args?.prompt_selection_percentage == undefined)
-      return [0, 0];
-    const decimalFraction =
-      runnerData?.runner_args?.prompt_selection_percentage / 100;
-    return recipesStats.reduce((acc, stats) => {
-      let percentageCalculatedTotalPrompts = 0;
-      const totalPromptsFromAllDatasets = Object.values(
-        stats.num_of_datasets_prompts
-      ).reduce((sum, value) => {
-        if (calcPercentageAtEachDataset) {
-          percentageCalculatedTotalPrompts += Math.floor(
-            value * decimalFraction
-          );
-        }
-        return sum + value;
-      }, 0);
-      const grandTotalPromptsToRun =
-        stats.num_of_prompt_templates > 0
-          ? totalPromptsFromAllDatasets * stats.num_of_prompt_templates
-          : totalPromptsFromAllDatasets;
-      let userInputTotalPromptsToRun = 0;
-      if (stats.num_of_prompt_templates > 0) {
-        if (calcPercentageAtEachDataset) {
-          userInputTotalPromptsToRun =
-            percentageCalculatedTotalPrompts * stats.num_of_prompt_templates;
-        } else {
-          userInputTotalPromptsToRun =
-            decimalFraction *
-            grandTotalPromptsToRun *
-            stats.num_of_prompt_templates;
-        }
-      } else {
-        if (calcPercentageAtEachDataset) {
-          userInputTotalPromptsToRun = percentageCalculatedTotalPrompts;
-        } else {
-          userInputTotalPromptsToRun = decimalFraction * grandTotalPromptsToRun;
-        }
+    if (mode === 'agentic') {
+      // Simplified calculation for agentic tests
+      if (!runnerData) return 0;
+
+      // If we have recipe stats (complex benchmarking structure), use them
+      if (
+        recipesStats.length > 0 &&
+        runnerData?.runner_args?.prompt_selection_percentage != undefined
+      ) {
+        const decimalFraction =
+          runnerData.runner_args.prompt_selection_percentage / 100;
+        return recipesStats.reduce((acc, stats) => {
+          let percentageCalculatedTotalPrompts = 0;
+          const totalPromptsFromAllDatasets = Object.values(
+            stats.num_of_datasets_prompts
+          ).reduce((sum, value) => {
+            if (calcPercentageAtEachDataset) {
+              percentageCalculatedTotalPrompts += Math.floor(
+                value * decimalFraction
+              );
+            }
+            return sum + value;
+          }, 0);
+          const grandTotalPromptsToRun =
+            stats.num_of_prompt_templates > 0
+              ? totalPromptsFromAllDatasets * stats.num_of_prompt_templates
+              : totalPromptsFromAllDatasets;
+          let userInputTotalPromptsToRun = 0;
+          if (stats.num_of_prompt_templates > 0) {
+            if (calcPercentageAtEachDataset) {
+              userInputTotalPromptsToRun =
+                percentageCalculatedTotalPrompts *
+                stats.num_of_prompt_templates;
+            } else {
+              userInputTotalPromptsToRun =
+                decimalFraction *
+                grandTotalPromptsToRun *
+                stats.num_of_prompt_templates;
+            }
+          } else {
+            if (calcPercentageAtEachDataset) {
+              userInputTotalPromptsToRun = percentageCalculatedTotalPrompts;
+            } else {
+              userInputTotalPromptsToRun =
+                decimalFraction * grandTotalPromptsToRun;
+            }
+          }
+          return acc + userInputTotalPromptsToRun;
+        }, 0);
       }
-      return acc + userInputTotalPromptsToRun;
-    }, 0);
-  }, [recipesStats, runnerData]);
+
+      // Fallback for agentic tests: simple estimation based on cookbooks and endpoints
+      const numCookbooks =
+        runnerData.runner_args && 'cookbooks' in runnerData.runner_args
+          ? runnerData.runner_args.cookbooks.length
+          : 1;
+      const numEndpoints = runnerData.endpoints
+        ? runnerData.endpoints.length
+        : 1;
+
+      return numCookbooks * numEndpoints * 50;
+    } else {
+      // Benchmark mode calculation
+      if (runnerData?.runner_args?.prompt_selection_percentage == undefined)
+        return [0, 0];
+      const decimalFraction =
+        runnerData?.runner_args?.prompt_selection_percentage / 100;
+      return recipesStats.reduce((acc, stats) => {
+        let percentageCalculatedTotalPrompts = 0;
+        const totalPromptsFromAllDatasets = Object.values(
+          stats.num_of_datasets_prompts
+        ).reduce((sum, value) => {
+          if (calcPercentageAtEachDataset) {
+            percentageCalculatedTotalPrompts += Math.floor(
+              value * decimalFraction
+            );
+          }
+          return sum + value;
+        }, 0);
+        const grandTotalPromptsToRun =
+          stats.num_of_prompt_templates > 0
+            ? totalPromptsFromAllDatasets * stats.num_of_prompt_templates
+            : totalPromptsFromAllDatasets;
+        let userInputTotalPromptsToRun = 0;
+        if (stats.num_of_prompt_templates > 0) {
+          if (calcPercentageAtEachDataset) {
+            userInputTotalPromptsToRun =
+              percentageCalculatedTotalPrompts * stats.num_of_prompt_templates;
+          } else {
+            userInputTotalPromptsToRun =
+              decimalFraction *
+              grandTotalPromptsToRun *
+              stats.num_of_prompt_templates;
+          }
+        } else {
+          if (calcPercentageAtEachDataset) {
+            userInputTotalPromptsToRun = percentageCalculatedTotalPrompts;
+          } else {
+            userInputTotalPromptsToRun =
+              decimalFraction * grandTotalPromptsToRun;
+          }
+        }
+        return acc + userInputTotalPromptsToRun;
+      }, 0);
+    }
+  }, [recipesStats, runnerData, mode]);
 
   const roundedUserInputNumOfPromptsGrandTotal = Math.max(
     1,
@@ -176,26 +301,31 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
     );
   const cookbooks = cookbooksData && cookbooksData;
 
-  let headingText = 'Running Tests...';
+  let headingText = title.running;
+  let showNoStatusMessage = false;
+
   if (statuses && runner_id !== null && statuses[runner_id]) {
     if (statuses[runner_id].current_status == TestStatusProgress.RUNNING) {
-      headingText = 'Running Tests...';
+      headingText = title.running;
     }
     if (statuses[runner_id].current_status == TestStatusProgress.COMPLETED) {
-      headingText = 'Tests Completed';
+      headingText = title.completed;
     }
     if (statuses[runner_id].current_status == TestStatusProgress.CANCELLED) {
-      headingText = 'Tests Cancelled';
+      headingText = title.cancelled;
     }
     if (statuses[runner_id].current_status == TestStatusProgress.ERRORS) {
-      headingText = 'Tests Completed';
+      headingText = title.completed;
     }
+  } else if (runner_id && (!statuses || !statuses[runner_id])) {
+    headingText = title.unknown;
+    showNoStatusMessage = mode === 'agentic'; // Only show for agentic mode
   }
 
   function handleCancelBtnClick(id: string) {
     return () => {
       setIsCancelBtnDisabled(true);
-      triggerCancelBenchmark(id);
+      (triggerCancel as (id: string) => void)(id);
     };
   }
 
@@ -253,7 +383,7 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
           />
         </div>
 
-        {/* clean this madness */}
+        {/* Cancel/View Report/View Errors buttons */}
         {!statuses ||
         !statuses[runner_id] ||
         (statuses &&
@@ -284,7 +414,7 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
             TestStatusProgress.COMPLETED ||
             statuses[runner_id].current_status ===
               TestStatusProgress.CANCELLED) && (
-            <Link href={`/benchmarking/report?id=${runner_id}`}>
+            <Link href={`${navigation.reportPath}?id=${runner_id}`}>
               <Button
                 width={150}
                 mode={ButtonType.OUTLINE}
@@ -341,10 +471,11 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
         </Modal>
       )}
       <MainSectionSurface
-        onCloseIconClick={() => router.push('/benchmarking')}
+        onCloseIconClick={() => router.push(navigation.homePath)}
         height="100%"
         bgColor={colors.moongray['950']}>
-        <div className="flex flex-col items-center min-h-full gap-4 ipad11Inch:gap-1 ipadPro:gap-1 py-4">
+        <div
+          className={`flex flex-col h-full gap-4 ipad11Inch:gap-1 ipadPro:gap-1 ${mode === 'benchmark' ? 'items-center' : ''}`}>
           {showRunDetails && runnerData ? (
             <PopupSurface
               style={{
@@ -430,21 +561,90 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
             </PopupSurface>
           ) : !isLoading ? (
             <>
-              <h2 className="text-[1.6rem] ipad11Inch:text-[1.2rem] ipadPro:text-[1.2rem] font-medium tracking-wide text-white w-full text-center">
-                {headingText}
-              </h2>
-              <Button
-                mode={ButtonType.OUTLINE}
-                hoverBtnColor={colors.moongray[700]}
-                pressedBtnColor={colors.moongray[900]}
-                size="md"
-                type="button"
-                text="See Details"
-                onClick={() => setShowRunDetails(!showRunDetails)}
-              />
+              {mode === 'agentic' && (
+                <div className="flex flex-col items-center gap-4 pt-8">
+                  <div className="flex items-center gap-4">
+                    <Icon
+                      name={IconName.Tools}
+                      size={48}
+                      color={colors.moonpurplelight}
+                    />
+                    <h2 className="text-[1.6rem] ipad11Inch:text-[1.2rem] ipadPro:text-[1.2rem] font-medium tracking-wide text-white text-center">
+                      {headingText}
+                    </h2>
+                  </div>
+                  <Button
+                    mode={ButtonType.OUTLINE}
+                    hoverBtnColor={colors.moongray[700]}
+                    pressedBtnColor={colors.moongray[900]}
+                    size="md"
+                    type="button"
+                    text="See Details"
+                    onClick={() => setShowRunDetails(!showRunDetails)}
+                  />
+                </div>
+              )}
+
+              {mode === 'benchmark' && (
+                <>
+                  <h2 className="text-[1.6rem] ipad11Inch:text-[1.2rem] ipadPro:text-[1.2rem] font-medium tracking-wide text-white w-full text-center">
+                    {headingText}
+                  </h2>
+                  <Button
+                    mode={ButtonType.OUTLINE}
+                    hoverBtnColor={colors.moongray[700]}
+                    pressedBtnColor={colors.moongray[900]}
+                    size="md"
+                    type="button"
+                    text="See Details"
+                    onClick={() => setShowRunDetails(!showRunDetails)}
+                  />
+                </>
+              )}
 
               <section className="relative flex w-full justify-center mb-5">
-                {progressBox}
+                {showNoStatusMessage ? (
+                  <div className="w-[90%] bg-moongray-900 p-6 rounded-lg text-center">
+                    <div className="flex justify-center mb-3">
+                      <Icon
+                        name={IconName.Alert}
+                        size={32}
+                        color={colors.moonwine[400]}
+                      />
+                    </div>
+                    <p className="text-white text-lg mb-2">
+                      No Status Available
+                    </p>
+                    <p className="text-moongray-400 text-sm mb-4">
+                      The {mode} test with ID{' '}
+                      <span className="text-moonpurplelight font-mono">
+                        {runner_id}
+                      </span>{' '}
+                      is not currently tracked in the status system.
+                    </p>
+                    <div className="text-moongray-400 text-sm space-y-1">
+                      <p>This could mean the test:</p>
+                      <p>• Completed very quickly</p>
+                      <p>• Failed to start properly</p>
+                      <p>• Is using a different tracking system</p>
+                    </div>
+                    <div className="mt-4">
+                      <Link href={`${navigation.reportPath}?id=${runner_id}`}>
+                        <Button
+                          width={150}
+                          mode={ButtonType.OUTLINE}
+                          size="md"
+                          type="button"
+                          hoverBtnColor={colors.moongray[700]}
+                          pressedBtnColor={colors.moongray[900]}
+                          text="Try View Report"
+                        />
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  progressBox
+                )}
               </section>
 
               <section className="w-full flex flex-col gap-2 items-center">
@@ -519,4 +719,4 @@ function BenchmarkRunStatus({ allStatuses }: { allStatuses: TestStatuses }) {
   );
 }
 
-export { BenchmarkRunStatus };
+export { RunStatus };

@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CookbooksSelection } from '@/app/benchmarking/components/cookbooksSelection';
+import { CookbookSelector } from '@/app/components/cookbookSelector/cookbookSelector';
+import { benchmarkCookbookSelectorConfig } from '@/app/config/testingConfigs';
 import { CookbooksProvider } from '@/app/benchmarking/contexts/cookbooksContext';
 import { useGetCookbooksQuery } from '@/app/services/cookbook-api-service';
 import { useGetAllRecipesQuery } from '@/app/services/recipe-api-service';
@@ -128,7 +129,8 @@ describe('CookbooksSelection', () => {
       () => mockAlreadySelectedCookbooks
     );
     renderWithProviders(
-      <CookbooksSelection
+      <CookbookSelector
+        {...benchmarkCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -185,7 +187,8 @@ describe('CookbooksSelection', () => {
       () => mockNoSelectedCookbooks
     );
     const { rerender } = renderWithProviders(
-      <CookbooksSelection
+      <CookbookSelector
+        {...benchmarkCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -215,7 +218,8 @@ describe('CookbooksSelection', () => {
         () => [mockCookbooks[0]] // simulate 1 cookbook selected
       );
       rerender(
-        <CookbooksSelection
+        <CookbookSelector
+          {...benchmarkCookbookSelectorConfig}
           onCookbookSelected={mockOnCookbookSelected}
           onCookbookUnselected={mockOnCookbookUnselected}
           onCookbookAboutClick={mockOnCookbookAboutClick}
@@ -241,7 +245,8 @@ describe('CookbooksSelection', () => {
       isFetching: false,
     });
     renderWithProviders(
-      <CookbooksSelection
+      <CookbookSelector
+        {...benchmarkCookbookSelectorConfig}
         onCookbookSelected={mockOnCookbookSelected}
         onCookbookUnselected={mockOnCookbookUnselected}
         onCookbookAboutClick={mockOnCookbookAboutClick}

@@ -5,9 +5,10 @@ import { SelectListItem } from '@/app/components/selectListItem';
 import { useModelsList } from '@/app/hooks/useLLMEndpointList';
 import { formatDate } from '@/app/lib/date-utils';
 import tailwindConfig from '@/tailwind.config';
+
 const colors = tailwindConfig.theme?.extend?.colors as CustomColors;
 
-type EndpointSelectorProps = {
+type EndpointsSelectorProps = {
   totalSelected: number;
   selectedModels: LLMEndpoint[];
   onModelClick: (model: LLMEndpoint) => void;
@@ -15,7 +16,7 @@ type EndpointSelectorProps = {
   onCreateClick: () => void;
 };
 
-function EndpointSelector(props: EndpointSelectorProps) {
+function EndpointsSelector(props: EndpointsSelectorProps) {
   const {
     totalSelected,
     selectedModels,
@@ -23,7 +24,7 @@ function EndpointSelector(props: EndpointSelectorProps) {
     onEditClick,
     onCreateClick,
   } = props;
-  const { models, isLoading } = useModelsList(); // todo - no need to abstract this hook. clean up
+  const { models, isLoading } = useModelsList();
 
   return (
     <div className="flex flex-col pt-4 gap-8 pb-4 h-[95%]">
@@ -55,7 +56,7 @@ function EndpointSelector(props: EndpointSelectorProps) {
           onClick={onCreateClick}
         />
       </section>
-      <div className="relative flex flex-col min-h-[200px] px-[10%] w-[100%] h-full items-center">
+      <div className="relative flex flex-col min-h-[200px] w-[100%] h-full items-center">
         {isLoading ? (
           <div className="ring">
             Loading
@@ -63,7 +64,7 @@ function EndpointSelector(props: EndpointSelectorProps) {
           </div>
         ) : (
           <ul
-            className="flex flex-row flex-wrap gap-[2%] w-[100%] overflow-y-auto custom-scrollbar px-4"
+            className="flex flex-row flex-wrap gap-[2%] w-[100%] overflow-y-auto custom-scrollbar px-8"
             style={{ height: '100%' }}>
             {models.map((model) => {
               const isSelected =
@@ -126,4 +127,4 @@ function EndpointSelector(props: EndpointSelectorProps) {
   );
 }
 
-export { EndpointSelector };
+export { EndpointsSelector };

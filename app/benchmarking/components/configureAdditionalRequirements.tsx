@@ -3,7 +3,7 @@ import { getAllEndpoints } from '@/actions/getAllEndpoints';
 import { PopupSurface } from '@/app/components/popupSurface';
 import { getEndpointsFromRequiredConfig } from '@/app/lib/getEndpointsFromRequiredConfig';
 import { ConfigureRequirementsItemCard } from './configureRequirementsItemCard';
-import { CookbookAbout } from './cookbookAbout';
+import { CookbookAbout } from '@/app/components/cookbookAbout';
 import { DatasetUploader } from './datasetUploader';
 
 type ConfigureAdditionalRequirementsProps = {

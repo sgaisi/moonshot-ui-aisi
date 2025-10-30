@@ -17,8 +17,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/v1/datasets/file',
-        destination: `${process.env.MOONSHOT_API_URL}/api/v1/datasets/file`,
+        source: '/api/v1/:path*',
+        destination: `${process.env.MOONSHOT_API_URL || 'http://localhost:5000'}/api/v1/:path*`,
       },
     ]
   },

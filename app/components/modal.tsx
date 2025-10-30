@@ -79,9 +79,22 @@ function Modal(props: ModalProps) {
             ) : null}
           </header>
         )}
-        <main style={{ height: 'calc(100% - 20px' }}>{children}</main>
+        <main
+          className="custom-scrollbar"
+          style={{
+            height: 'calc(100% - 100px)', // Account for header (~40px) and footer (~60px)
+            overflowY: 'auto',
+            paddingRight: '4px', // Space for scrollbar
+          }}>
+          {children}
+        </main>
         {(onSecondaryBtnClick || onPrimaryBtnClick) && (
-          <footer className="absolute bottom-0 left-0 flex justify-end items-center gap-2 p-4 w-full mt-4">
+          <footer
+            className="absolute bottom-0 left-0 right-0 flex justify-end items-center gap-2 p-4 mt-4"
+            style={{
+              backgroundColor: bgColor,
+              borderRadius: '0 0 15px 15px', // Match modal border radius
+            }}>
             {onSecondaryBtnClick && (
               <Button
                 mode={ButtonType.OUTLINE}

@@ -9,57 +9,55 @@ import { PopupSurface } from '@/app/components/popupSurface';
 import { TabsMenu, TabItem } from '@/app/components/tabsMenu';
 import { colors } from '@/app/customColors';
 import { useGetCookbooksQuery } from '@/app/services/cookbook-api-service';
-import {
-  addBenchmarkCookbooks,
-  removeBenchmarkCookbooks,
-  updateBenchmarkCookbooks,
-  useAppDispatch,
-  useAppSelector,
-} from '@/lib/redux';
+import { useAppDispatch, useAppSelector } from '@/lib/redux';
 import config from '@/moonshot.config';
-import { CookbookSelectionItem } from './cookbookSelectionItem';
-
-const descQuality =
-  "Quality evaluates the model's ability to consistently produce content that meets general correctness and application-specific standards.";
-const descCapability =
-  "Capability assesses the AI model's ability to perform within the context of the unique requirements and challenges of a particular domain or task.";
-const descTrustAndSafety =
-  'Trust & Safety addresses the reliability, ethical considerations, and inherent risks of the AI model. It also examines potential scenarios where the AI system could be used maliciously or unethically.';
+import { CookbookSelectionItem } from '@/app/components/cookbookSelectionItem';
 
 const CookbookAbout = dynamic(
-  () => import('./cookbookAbout').then((mod) => mod.CookbookAbout),
+  () =>
+    import('@/app/components/cookbookAbout').then((mod) => mod.CookbookAbout),
   {
     loading: () => <LoadingAnimation />,
     ssr: true,
   }
 );
 
-const tabItems: TabItem<string[]>[] = config.cookbookCategoriesTabs.map(
-  (item) => ({
-    id: item.id,
-    label: item.label,
-    data: item.categoryNames,
-  })
-);
+export type CookbookSelectorMode = 'agentic' | 'benchmark';
 
-type Props = {
+export interface CookbookSelectorConfig {
+  mode: CookbookSelectorMode;
+  tabItems: TabItem<string[]>[];
+  categoryDescriptions: Record<string, string>;
+  reduxSelector: (state: Record<string, unknown>) => Cookbook[];
+  reduxActions: {
+    add: (cookbooks: Cookbook[]) => { type: string; payload: Cookbook[] };
+    remove: (cookbooks: Cookbook[]) => { type: string; payload: Cookbook[] };
+    update: (cookbooks: Cookbook[]) => { type: string; payload: Cookbook[] };
+  };
+}
+
+interface CookbookSelectorProps extends CookbookSelectorConfig {
   onCookbookSelected: (selectedCookbooks: Cookbook[]) => void;
   onCookbookUnselected: (selectedCookbooks: Cookbook[]) => void;
   onCookbookAboutClick: () => void;
   onCookbookAboutClose: () => void;
-};
+}
 
-function CookbooksSelection(props: Props) {
+function CookbookSelector(props: CookbookSelectorProps) {
   const {
+    mode,
+    tabItems,
+    categoryDescriptions,
+    reduxSelector,
+    reduxActions,
     onCookbookSelected,
     onCookbookUnselected,
     onCookbookAboutClick,
     onCookbookAboutClose,
   } = props;
+
   const dispatch = useAppDispatch();
-  const selectedCookbooks = useAppSelector(
-    (state) => state.benchmarkCookbooks.entities
-  );
+  const selectedCookbooks = useAppSelector(reduxSelector);
   const [activeTab, setActiveTab] = useState(tabItems[0]);
   const [cookbookDetails, setCookbookDetails] = useState<
     Cookbook | undefined
@@ -76,24 +74,34 @@ function CookbooksSelection(props: Props) {
       { skip: !isFirstCookbooksFetch }
     );
 
-  const excludedCategories = activeTab.data
-    ? activeTab.data.reduce<string[]>((acc, cat) => {
-        if (cat.startsWith('exclude:')) {
-          acc.push(cat.split(':')[1]);
-        }
-        return acc;
-      }, [])
-    : undefined;
-  const selectedCategories =
-    activeTab.data && excludedCategories
-      ? activeTab.data.filter(
-          (cat) =>
-            !excludedCategories.includes(cat) && !cat.startsWith('exclude:')
-        )
-      : activeTab.data;
+  // Build query parameters based on active tab
+  const buildQueryParams = () => {
+    // Handle agentic tab (uses tags filtering)
+    if (activeTab.id === 'agentic') {
+      return {
+        count: true,
+        tags: ['agentic'],
+      };
+    }
 
-  const { data: cookbooks = [], isFetching } = useGetCookbooksQuery(
-    {
+    // Handle all other tabs (uses categories filtering)
+    const excludedCategories = activeTab.data
+      ? activeTab.data.reduce<string[]>((acc, cat) => {
+          if (cat.startsWith('exclude:')) {
+            acc.push(cat.split(':')[1]);
+          }
+          return acc;
+        }, [])
+      : undefined;
+    const selectedCategories =
+      activeTab.data && excludedCategories
+        ? activeTab.data.filter(
+            (cat) =>
+              !excludedCategories.includes(cat) && !cat.startsWith('exclude:')
+          )
+        : activeTab.data;
+
+    return {
       categories:
         selectedCategories && selectedCategories.length > 0
           ? selectedCategories
@@ -103,12 +111,20 @@ function CookbooksSelection(props: Props) {
           ? excludedCategories
           : undefined,
       count: true,
-    },
-    {
-      skip:
-        (!selectedCategories || selectedCategories.length === 0) &&
-        (!excludedCategories || excludedCategories.length === 0),
-    }
+    };
+  };
+
+  const queryParams = buildQueryParams();
+  const shouldSkipQuery =
+    mode === 'benchmark' &&
+    activeTab.id !== 'agentic' &&
+    (!queryParams.categories || queryParams.categories.length === 0) &&
+    (!queryParams.categories_excluded ||
+      queryParams.categories_excluded.length === 0);
+
+  const { data: cookbooks = [], isFetching } = useGetCookbooksQuery(
+    queryParams,
+    { skip: shouldSkipQuery }
   );
 
   const orderedCookbooks = React.useMemo(() => {
@@ -139,13 +155,13 @@ function CookbooksSelection(props: Props) {
 
   function handleCookbookSelect(cb: Cookbook) {
     if (selectedCookbooks.some((t) => t.id === cb.id)) {
-      dispatch(removeBenchmarkCookbooks([cb]));
+      dispatch(reduxActions.remove([cb]));
       const updatedSelectedCookbooks = selectedCookbooks.filter(
         (c) => c.id !== cb.id
       );
       onCookbookUnselected(updatedSelectedCookbooks);
     } else {
-      dispatch(addBenchmarkCookbooks([cb]));
+      dispatch(reduxActions.add([cb]));
       const updatedSelectedCookbooks = [...selectedCookbooks, cb];
       onCookbookSelected(updatedSelectedCookbooks);
     }
@@ -161,14 +177,7 @@ function CookbooksSelection(props: Props) {
     onCookbookAboutClose();
   }
 
-  const categoryDesc =
-    activeTab.id === 'quality'
-      ? descQuality
-      : activeTab.id === 'capability'
-        ? descCapability
-        : activeTab.id === 'trustAndSafety'
-          ? descTrustAndSafety
-          : '';
+  const categoryDesc = categoryDescriptions[activeTab.id] || '';
 
   useEffect(() => {
     if (!cookbooks) return;
@@ -176,7 +185,7 @@ function CookbooksSelection(props: Props) {
       selectedCookbooks.some((scb) => scb.id === cb.id)
     );
     if (selectedCookbooksWithCounts.length) {
-      dispatch(updateBenchmarkCookbooks(selectedCookbooksWithCounts));
+      dispatch(reduxActions.update(selectedCookbooksWithCounts));
     }
   }, [cookbooks]);
 
@@ -198,23 +207,31 @@ function CookbooksSelection(props: Props) {
       ) : (
         <React.Fragment>
           <section className="flex flex-col items-center justify-center gap-5 px-8">
-            <h2 className="text-[1.6rem] leading-[2rem] tracking-wide text-white w-full text-center">
+            <h2 className="text-[1.6rem] leading-[2rem] tracking-wide text-white text-center max-w-4xl mx-auto">
               Select the cookbooks you want to run
             </h2>
-            <div className="flex flex-row gap-5 w-full">
-              <TabsMenu
-                className="w-[445px]"
-                tabItems={tabItems}
-                barColor={colors.moongray['800']}
-                tabHoverColor={colors.moongray['700']}
-                selectedTabColor={colors.moonpurple}
-                textColor={colors.white}
-                activeTabId={activeTab.id}
-                onTabClick={handleTabClick}
-              />
-              <p className="flex-1 text-white px-8 text-[0.9rem] min-h-[65px]">
-                {categoryDesc}
-              </p>
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 max-w-6xl mx-auto w-full items-center justify-center">
+              <div className="w-full lg:flex-1 max-w-2xl">
+                <TabsMenu
+                  className="flex justify-center"
+                  tabItems={tabItems}
+                  barColor={colors.moongray['800']}
+                  tabHoverColor={colors.moongray['700']}
+                  selectedTabColor={colors.moonpurple}
+                  textColor={colors.white}
+                  activeTabId={activeTab.id}
+                  onTabClick={handleTabClick}
+                  layout="responsive"
+                  compactMode={false}
+                />
+              </div>
+              {categoryDesc && (
+                <div className="w-full lg:w-auto lg:flex-1 lg:max-w-md">
+                  <p className="text-white px-4 lg:px-6 py-3 text-[0.9rem] min-h-[65px] bg-gray-800/30 rounded-lg text-center">
+                    {categoryDesc}
+                  </p>
+                </div>
+              )}
             </div>
           </section>
           <section
@@ -224,7 +241,9 @@ function CookbooksSelection(props: Props) {
               {isFetching ? (
                 <LoadingAnimation />
               ) : cookbooks.length === 0 ? (
-                <div className="text-white">No cookbooks found</div>
+                <div className="text-white text-center w-full">
+                  No cookbooks found
+                </div>
               ) : (
                 orderedCookbooks.map((cookbook) => {
                   const selected = selectedCookbooks.some(
@@ -249,4 +268,4 @@ function CookbooksSelection(props: Props) {
   );
 }
 
-export { CookbooksSelection };
+export { CookbookSelector };
